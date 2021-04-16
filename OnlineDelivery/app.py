@@ -28,6 +28,28 @@ def logged():
     else:
         return render_template('index.html')
 
+@app.route('/WholesalerUpdateItem',methods=['POST','GET'])
+
+def WholesalerUpdateItem():
+    if request.method == 'POST':
+        try:
+            itemCategory = request.form['itemCategory']
+            itemId = request.form['itemId']
+            itemName = request.form['itemName']
+            itemPrice = request.form['itemPrice']
+            itemQuantity = request.form['itemQuantity']
+            with sqlite3.connect("Database.db") as connection:
+                cur.execute("INSERT INTO Items (ItemId,ItemName,ItemPrice,ItemQuantity,ItemCategory) VALUES (?,?,?,?,?);", (itemId,itemName,itemPrice,itemQuantity,itemCategory))
+                connection.commit()
+                return "Inserted"
+
+        except:
+            connection.rollback()
+            return "Failed"
+        finally:
+            connection.close()
+    return "EXIT"
+
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True)        
