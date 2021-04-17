@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>RetailHomePage</title>
+        <title>RetailerHomePage</title>
     </head>
+    
     <body>
         <h1>
             LiveMart for Retailers
@@ -15,6 +16,9 @@
           </div>
           <link rel="stylesheet" href="../static/css/navbar.css">
 
+          <h2>
+            Buying?
+        </h2> 
         <form method = "post" action = "{{ url_for('wholesalerAddItem') }}">
             <button type="submit">
                 Add Item
@@ -26,4 +30,28 @@
                 Delete Item
             </button>
         </form>
+
+        <form method = "post" action = "{{ url_for('wholesalerDeleteItem') }}">
+            <button type="submit">
+                Add Customer
+            </button>
+        </form>
+
+        <form method = "post" action = "{{ url_for('wholesalerDeleteItem') }}">
+            <button type="submit">
+                Delete Customer
+            </button>
+        </form>
+
+<h2>
+            Selling?
+        </h2> 
+
+
+
     </body>
+</html>
+
+
+
+  
