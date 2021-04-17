@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>RetailHomePage</title>
+    </head>
+    <body>
+        <h1>
+            LiveMart for Retailers
+        </h1>
+
+        <form method = "post" action = "{{ url_for('wholesalerAddItem') }}">
+            <button type="submit">
+                Add Item
+            </button>
+        </form>
+
+        <form method = "post" action = "{{ url_for('wholesalerDeleteItem') }}">
+            <button type="submit">
+                Delete Item
+            </button>
+        </form>
+    </body>
+</html>
