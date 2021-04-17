@@ -19,13 +19,22 @@ def logged():
             if(role=="Wholesaler"):
                 cur.execute("SELECT * FROM  Wholesalers WHERE username=?", (uname,))
                 rows=cur.fetchall()
+                if len(rows)>=1:
+                    if rows[0][2]==password:
+                        session['Id']=rows[0][0]
+                        return redirect(url_for('wholesalerHome'))
+                    else:
+                        flash('Invalid Credentials... Try Again !!')
+                else :
+                    flash('Invalid UserName')                
+            elif(role=="Retailer"):
+                cur.execute("SELECT * FROM  Retailers WHERE username=?", (uname,))
+                rows=cur.fetchall()
                 if rows[0][2]==password:
                     session['Id']=rows[0][0]
-                    return redirect(url_for('wholesalerHome'))
+                    return redirect(url_for('retailerHome'))
                 else:
                     flash('Invalid Credentials... Try Again !!')
-            elif(role=="Retailer"):
-                return "Retailer"
             else:
                 return "Customer"
     return render_template('index.html') 
@@ -35,6 +44,12 @@ def wholesalerHome():
     val =session.get('Id', None)
     connection = sqlite3.connect("database.db")
     return render_template("WholesalerHome.html")
+
+@app.route('/retailerHome')
+def retailerHome():
+    val =session.get('Id', None)
+    connection = sqlite3.connect("database.db")
+    return render_template("RetailerHome.html")
 
 @app.route('/wholesalerAddItem',methods=['POST','GET'])
 def wholesalerAddItem():
