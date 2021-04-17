@@ -10,8 +10,7 @@
   <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
-  <h1>LiveMarts</h1>
-<br><br>
+<br><br>  
 <div class="container">
   <form method = "post" action = "{{ url_for('logged') }}">
     {% with messages=get_flashed_messages()%}
@@ -21,8 +20,10 @@
         {% endfor %}
       {% endif %}
     {% endwith %}
+    <h1>LiveMart</h1>
+<br>
+    <h2 class="text-center">Login</h2>  
     <div class="form-group">
-      <label for="Role">Role</label>
       <select class="form-control" name=Role required>
         <option disabled selected value="">Select Role</option>
         <option>Wholesaler</option>
@@ -36,10 +37,11 @@
       <input type="text" class="form-control" placeholder="Enter Username" name="Username" required>
     </div>
     <div class="form-group">
-      <label for="pwd">Password:</label>
       <input type="password" class="form-control" placeholder="Enter Password" name="Password" required>
     </div>
     <button type="submit" class="btn btn-default">Submit</button>
+    <br><br>
+    <p class="text-center medium">Don't have an account? <a href="#">Sign up here!</a></p>
   </form>
 </div>
 
