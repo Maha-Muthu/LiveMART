@@ -1,1 +1,10 @@
-Add CSS Part Here
+body
+{
+    background-image:url("../static/bg_logo.jpg");
+    text-align: center;
+}
+h1
+{
+    text-align: center;
+    font-size: 34px;
+}
