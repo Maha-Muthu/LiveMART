@@ -1,0 +1,19 @@
+body {
+    color: rgb(0, 0, 0);
+    background-image:url("../Retailers.jpg");
+    background-repeat: no-repeat;
+    /*background-position-x: center;
+    background-position-y: center;
+    background-size: cover;*/
+    background-size: cover;
+}
+
+h1{
+    text-align: center;
+    color: #e28903;
+    font-size: 50px;
+}
+
+h2 {
+    color: rgb(0, 0, 0);
+}

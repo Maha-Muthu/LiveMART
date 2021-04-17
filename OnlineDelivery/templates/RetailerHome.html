@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>RetailerHomePage</title>
+        <link rel="stylesheet" href="../static/css/rh.css">
     </head>
     
     <body>
@@ -15,9 +16,17 @@
             <a href="#Logout">Logout</a>
           </div>
           <link rel="stylesheet" href="../static/css/navbar.css">
-
+        <div class="container">
+        <form method = "post" action = "{{ url_for('logged') }}">
+            {% with messages=get_flashed_messages()%}
+            {% if messages %}
+                {% for message in messages %}
+                <p style="color:red;">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
           <h2>
-            Buying?
+            Manage Items
         </h2> 
         <form method = "post" action = "{{ url_for('wholesalerAddItem') }}">
             <button type="submit">
@@ -30,7 +39,9 @@
                 Delete Item
             </button>
         </form>
-
+        <h2>
+            Manage Customers
+        </h2>
         <form method = "post" action = "{{ url_for('wholesalerDeleteItem') }}">
             <button type="submit">
                 Add Customer
@@ -42,13 +53,10 @@
                 Delete Customer
             </button>
         </form>
-
-<h2>
-            Selling?
-        </h2> 
-
-
-
+    </div>
+    <h2>
+        Shop
+    </h2> 
     </body>
 </html>
 
