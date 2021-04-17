@@ -1,10 +1,12 @@
 body
 {
-    background-image:url("../static/bg_logo.jpg");
+    background-image:url("../bg_logo.jpg");
+    background-repeat:no-repeat;
+    background-position:top;
     text-align: center;
 }
 h1
 {
-    text-align: center;
+    text-align: lefts;
     font-size: 34px;
 }
