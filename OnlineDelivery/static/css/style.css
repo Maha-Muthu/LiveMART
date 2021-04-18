@@ -2,9 +2,6 @@ body {
     color: #fff;
     background-image:url("../racks.jpg");
     background-repeat: no-repeat;
-    /*background-position-x: center;
-    background-position-y: center;
-    background-size: cover;*/
     background-size: cover;
 }
 h1
