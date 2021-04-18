@@ -82,7 +82,7 @@ def signed():
                         connection.commit()
         except:
             connection.rollback()
-            return "Failed"
+            flash("Sign Up Failed")
         finally:
             connection.close()
     return render_template('index.html')
@@ -105,12 +105,13 @@ def customerHome():
     connection = sqlite3.connect("database.db")
     return render_template("CustomerHome.html")
     
+#WHOLESALER
+
 @app.route('/wholesalerAddItem',methods=['POST','GET'])
 def wholesalerAddItem():
     val =session.get('Id', None)
     connection = sqlite3.connect("database.db")
     return render_template("WholesalerUpload.html")
-
 
 @app.route('/wholesalerUpdateItem',methods=['POST','GET'])
 def wholesalerUpdateItem():
@@ -126,13 +127,12 @@ def wholesalerUpdateItem():
                 cur = connection.cursor()
                 cur.execute("INSERT INTO Items (ItemName,ItemPrice,ItemQuantity,ItemCategory,ItemOwnerId,ItemImageLink) VALUES (?,?,?,?,?,?);", (itemName,itemPrice,itemQuantity,itemCategory,val,itemImage))
                 connection.commit()
-                return "Inserted"
         except:
             connection.rollback()
-            return "Failed"
+            flash("Add Item Failed")
         finally:
             connection.close()
-    return "EXIT"
+    return redirect(url_for('wholesalerHome'))
 
 @app.route('/wholesalerDeleteItem',methods=['POST','GET'])
 def wholesalerDeleteItem():
@@ -153,13 +153,42 @@ def wholesalerRemoveItem():
                 cur = connection.cursor()
                 cur.execute("DELETE FROM Items  WHERE ItemId=?", (itemId,))
                 connection.commit()
-                return "Deleted"
         except:
             connection.rollback()
-            return "Failed"
+            flash("Delete Item Failed")
         finally:
             connection.close()
-    return "EXIT"
+    return redirect(url_for('wholesalerHome'))
+
+@app.route('/viewRetailers',methods=['POST','GET'])
+def viewRetailers():
+    val =session.get('Id', None)
+    connection = sqlite3.connect("database.db")
+    return render_template("WholesalerViewRetailers.html")
+
+@app.route('/removeRetailers',methods=['POST','GET'])
+def removeRetailers():
+    val =session.get('Id', None)
+    connection = sqlite3.connect("database.db")
+    return render_template("WholesalerRemoveRetailers.html")
+
+# RETAILER
+
+@app.route('/retailerAddItem',methods=['POST','GET'])
+def retailerAddItem():
+    val =session.get('Id', None)
+    connection = sqlite3.connect("database.db")
+    return render_template("RetailerUpload.html")
+
+@app.route('/retailerDeleteItem',methods=['POST','GET'])
+def retailerDeleteItem():
+    curid =session.get('Id', None)
+    connection = sqlite3.connect("database.db")
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM Items WHERE ItemOwnerId=?", (curid,))
+    rows = cur.fetchall()
+    return render_template("RetailerRemoveItem.html",rows=rows)
+
 
 @app.route('/retailerOrderAll',methods=['POST','GET'])
 def retailerOrderAll():
@@ -169,6 +198,8 @@ def retailerOrderAll():
     cur.execute("SELECT * FROM Items ")
     rows = cur.fetchall()
     return render_template("RetailerOrder.html",rows=rows,range=range(0,len(rows),4),len=len(rows))
+
+# CUSTOMER
 
 @app.route('/customerOrderAll',methods=['POST','GET'])
 def customerOrderAll():
@@ -216,9 +247,15 @@ def viewCustomerCart():
     qt=list((CustomerCart[val]).values())
     for i in range (len(rows)):
         totalcost.append(int(qt[i])*int(rows[i][2]))
-    totalsum=sum(totalcost)
+    totalsum=sum(totalcost)    
     return render_template("CustomerCart.html",range=range(0,len(rows)),totalsum=totalsum,rows=rows,totalcost=totalcost,quantity=list(CustomerCart[val].values()))
-    
+
+@app.route('/logout')
+def logout():
+    val = session.get('Id', None)
+    session.pop(val, None)
+    return render_template("index.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)        
