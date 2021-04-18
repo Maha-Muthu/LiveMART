@@ -206,10 +206,18 @@ def addToCustomerCart():
 def viewCustomerCart():
     val =session.get('Id', None)
     global CustomerCart
-    Items=CustomerCart[val]
-    cur.execute("SELECT * FROM Items WHERE ItemId=?",(Id,))
+    ItemIds=tuple(CustomerCart[val].keys())
+    connection = sqlite3.connect("database.db")
+    cur = connection.cursor()
+    cur.execute('SELECT ItemId,ItemName,ItemPrice FROM Items where ItemId in (' + ','.join(map(str, ItemIds)) + ')')
     rows = cur.fetchall()
-    return render_template("CustomerCart.html",cart=CustomerCart[val])
+    print(rows)
+    totalcost=[]
+    qt=list((CustomerCart[val]).values())
+    for i in range (len(rows)):
+        totalcost.append(int(qt[i])*int(rows[i][2]))
+    totalsum=sum(totalcost)
+    return render_template("CustomerCart.html",range=range(0,len(rows)),totalsum=totalsum,rows=rows,totalcost=totalcost,quantity=list(CustomerCart[val].values()))
     
 
 if __name__ == "__main__":

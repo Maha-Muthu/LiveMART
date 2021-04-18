@@ -30,23 +30,33 @@
       <tr>
         <th scope="col">Item Name</th>
         <th scope="col">Item Quantity</th>
+        <th scope="col">Item Unit Price</th>
         <th scope="col">Total Price</th>
         <th scope="col">Remove</th>
         <th scope="col">Buffer</th>
       </tr>
     </thead>
+    <script>
+      function multiply(a,b)
+      {
+        return a*b;
+      }
+      </script>
+      
     <tbody>
-      {% for item in cart %}
+      {% for i in range %}
       <tr>
-        <td scope="row">{{item[0]}}</td>
-        <td scope="row">{{item[1]}}</td>
-        <td scope="row">Sample</td>
+        <td scope="row">{{rows[i][1]}}</td>
+        <td scope="row">{{quantity[i]}}</td>
+        <td scope="row">{{rows[i][2]}}</td>
+        <td scope="row">{{totalcost[i]}}</td>
         <td scope="row">Sample</td>
         <td scope="row">Remove</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+  <h1>Total Amount In Cart {{totalsum}}</h1>
   <br><br>
   <div class="text-center">
         <a href="#" class="btn btn-primary">Order Online</a>
