@@ -192,7 +192,7 @@ def addToCustomerCart():
         if(Id not in CustomerCart[val]):
             CustomerCart[val][Id]=quantity
         else:
-            CustomerCart[val][Id]+=quantity
+            CustomerCart[val][Id]=int(CustomerCart[val][Id])+int(quantity)
     connection = sqlite3.connect("database.db")
     cur = connection.cursor()
     cur.execute("SELECT ItemQuantity FROM Items WHERE ItemId=?",(Id,))
