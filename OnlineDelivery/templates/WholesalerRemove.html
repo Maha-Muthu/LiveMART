@@ -5,6 +5,7 @@
     </head>
     <body>
         <h1>Delete Item</h1>
+        <img src="{{rows[6]}},'.base64_encode({{rows[7]}}).'"/>
         <h2>Items You Currently Have</h2>
         <br>
         <table>
@@ -24,7 +25,7 @@
                     <td>{{row[1]}}</td>
                     <td>{{row[2]}}</td>
                     <td>{{row[3]}}</td>
-                    <td>{{row[4]}}</td>                    
+                    <td>{{row[4]}}</td>                   
                 </tr>
                 {% endfor %}
             </tbody>

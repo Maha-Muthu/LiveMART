@@ -4,6 +4,8 @@ import sqlite3
 app = Flask(__name__)
 app.secret_key = "E-Commerce"
 
+CustomerCart=[]
+
 @app.route('/', methods=["GET", "POST"])
 def main():
     return render_template('index.html')
@@ -24,20 +26,66 @@ def logged():
                         session['Id']=rows[0][0]
                         return redirect(url_for('wholesalerHome'))
                     else:
-                        flash('Invalid Credentials... Try Again !!')
+                        flash('Password Incorrect ... Try Again !!')
                 else :
-                    flash('Invalid UserName')                
+                    flash('Username Incorrect ... Try Again !!')                
             elif(role=="Retailer"):
                 cur.execute("SELECT * FROM  Retailers WHERE username=?", (uname,))
                 rows=cur.fetchall()
-                if rows[0][2]==password:
-                    session['Id']=rows[0][0]
-                    return redirect(url_for('retailerHome'))
-                else:
-                    flash('Invalid Credentials... Try Again !!')
+                if len(rows)>=1:
+                    if rows[0][2]==password:
+                        session['Id']=rows[0][0]
+                        return redirect(url_for('retailerOrder'))
+                    else:
+                        flash('Password Incorrect ... Try Again !!')
+                else :
+                    flash('Username Incorrect ... Try Again !!')                
             else:
-                return "Customer"
-    return render_template('index.html') 
+                cur.execute("SELECT * FROM  Customers WHERE username=?", (uname,))
+                rows=cur.fetchall()
+                if len(rows)>=1:
+                    if rows[0][2]==password:
+                        session['Id']=rows[0][0]
+                        return redirect(url_for('customerHome'))
+                    else:
+                        flash('Password Incorrect ... Try Again !!')
+                else :
+                    flash('Username Incorrect ... Try Again !!')
+    return render_template('index.html')
+
+@app.route('/signup',methods=['POST','GET'])
+def signup():
+    return render_template("SignUp.html") 
+
+@app.route('/signed',methods=['POST','GET'])
+def signed():
+    if request.method=='POST':
+        try:
+            uname=request.form['uname']
+            password=request.form['password']
+            phone_num=request.form['phone_num']
+            email=request.form['email']
+            roles= request.form.getlist('roles')
+            latitude=request.form['latitude']
+            longitude=request.form['longitude']
+            with sqlite3.connect('Database.db') as connection:
+                cur = connection.cursor()
+                for role in roles:
+                    if role=="Wholesaler":
+                        cur.execute("INSERT INTO Wholesalers (username,password,eMailId,PhoneNumber,Latitude,Longitude) VALUES (?,?,?,?,?,?);", (uname,password,email,phone_num,latitude,longitude))
+                        connection.commit()
+                    elif role=="Retailer":
+                        cur.execute("INSERT INTO Retailers (username,password,eMailId,PhoneNumber,Latitude,Longitude) VALUES (?,?,?,?,?,?);", (uname,password,email,phone_num,latitude,longitude))
+                        connection.commit()
+                    elif role=="Customer":
+                        cur.execute("INSERT INTO Customers (username,password,eMailId,PhoneNumber,Latitude,Longitude) VALUES (?,?,?,?,?,?);", (uname,password,email,phone_num,latitude,longitude))
+                        connection.commit()
+        except:
+            connection.rollback()
+            return "Failed"
+        finally:
+            connection.close()
+    return render_template('index.html')
 
 @app.route('/wholesalerHome')
 def wholesalerHome():
@@ -51,6 +99,12 @@ def retailerHome():
     connection = sqlite3.connect("database.db")
     return render_template("RetailerHome.html")
 
+@app.route('/customerHome')
+def customerHome():
+    val =session.get('Id', None)
+    connection = sqlite3.connect("database.db")
+    return render_template("CustomerHome.html")
+    
 @app.route('/wholesalerAddItem',methods=['POST','GET'])
 def wholesalerAddItem():
     val =session.get('Id', None)
@@ -64,13 +118,13 @@ def wholesalerUpdateItem():
         try:
             val =session.get('Id', None)
             itemCategory = request.form['itemCategory']
-            itemId = request.form['itemId']
             itemName = request.form['itemName']
             itemPrice = request.form['itemPrice']
             itemQuantity = request.form['itemQuantity']
+            itemImage = request.form['itemImage']
             with sqlite3.connect("Database.db") as connection:
                 cur = connection.cursor()
-                cur.execute("INSERT INTO Items (ItemId,ItemName,ItemPrice,ItemQuantity,ItemCategory,ItemOwnerId) VALUES (?,?,?,?,?,?);", (itemId,itemName,itemPrice,itemQuantity,itemCategory,val))
+                cur.execute("INSERT INTO Items (ItemName,ItemPrice,ItemQuantity,ItemCategory,ItemOwnerId,ItemImageLink) VALUES (?,?,?,?,?,?);", (itemName,itemPrice,itemQuantity,itemCategory,val,itemImage))
                 connection.commit()
                 return "Inserted"
         except:
@@ -107,6 +161,33 @@ def wholesalerRemoveItem():
             connection.close()
     return "EXIT"
 
+@app.route('/retailerOrderAll',methods=['POST','GET'])
+def retailerOrderAll():
+    curid =session.get('Id', None)
+    connection = sqlite3.connect("database.db")
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM Items ")
+    rows = cur.fetchall()
+    return render_template("RetailerOrder.html",rows=rows,range=range(0,len(rows),4),len=len(rows))
+
+@app.route('/customerOrderAll',methods=['POST','GET'])
+def customerOrderAll():
+    curid =session.get('Id', None)
+    connection = sqlite3.connect("database.db")
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM Items ")
+    rows = cur.fetchall()
+    return render_template("CustomerOrder.html",rows=rows,range=range(0,len(rows),4),len=len(rows))
+
+@app.route('/addToCustomerCart',methods=['POST','GET'])
+def addToCustomerCart():
+    val =session.get('Id', None)
+    Id = request.form['Id']
+    quantity = request.form['quantity']
+    print(val,Id,quantity)
+    global CustomerCart
+    return "Added To Cart"
+    
 
 if __name__ == "__main__":
     app.run(debug=True)        
