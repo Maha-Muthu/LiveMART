@@ -15,14 +15,14 @@
     Cart
   </h1>
   <div class="topnav">
-    <a href="#home">Home</a>
+    <a href="{{ url_for('customerHome')}}">Home</a>
     <a class="active"href="#">Cart</a>
     <a href="#Transactions">Transactions</a>
-    <a href="#Logout">Logout</a>
+    <a href="{{ url_for('logout')}}">Logout</a>
   </div>
   <br><br>
   <h2>
-    Your Shopping Cart:
+    Your Shopping Cart
   </h2>
   <br><br>
   <table class="table">
@@ -32,17 +32,9 @@
         <th scope="col">Item Quantity</th>
         <th scope="col">Item Unit Price</th>
         <th scope="col">Total Price</th>
-        <th scope="col">Remove</th>
-        <th scope="col">Buffer</th>
+        <th scope="col">Remove Item</th>
       </tr>
     </thead>
-    <script>
-      function multiply(a,b)
-      {
-        return a*b;
-      }
-      </script>
-      
     <tbody>
       {% for i in range %}
       <tr>
@@ -50,8 +42,7 @@
         <td scope="row">{{quantity[i]}}</td>
         <td scope="row">{{rows[i][2]}}</td>
         <td scope="row">{{totalcost[i]}}</td>
-        <td scope="row">Sample</td>
-        <td scope="row">Remove</td>
+        <td scope="row">Sample Item</td>
       </tr>
       {% endfor %}
     </tbody>
