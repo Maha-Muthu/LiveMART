@@ -2,22 +2,150 @@
 <html>
     <head>
         <title>WholesalerHomePage</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="../static/css/wholesalerhome.css">
+        <title>CustomerHome</title>    
     </head>
     <body>
         <h1>
-            WholesalerHomePage
+            LiveMart for Wholesalers
         </h1>
-
-        <form method = "post" action = "{{ url_for('wholesalerAddItem') }}">
-            <button type="submit">
-                Add Item
-            </button>
-        </form>
-
-        <form method = "post" action = "{{ url_for('wholesalerDeleteItem') }}">
-            <button type="submit">
-                Delete Item
-            </button>
-        </form>
+        <div class="topnav">
+            <a class="active" href="#">Home</a>
+            <a href="#Logout">Logout</a>
+          </div>
+          <br>
+  <h2>
+    Manage items
+  </h2>
+  <br>
+  <div id="cards">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="card box-shadow">
+            <img src="../static/add_items.PNG" class="card-img-top" alt="..." width="50%" height="50%">
+            <div class="card-body">
+              <h5 class="card-title"><form method = "post" action = "{{ url_for('wholesalerAddItem') }}">
+                <button type="submit">
+                    Add Item
+                </button>
+            </form></h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="card box-shadow">
+            <img src="../static/remove_items.PNG" class="card-img-top" alt="..." width="50%" height="50%">
+            <div class="card-body">
+              <h5 class="card-title"><form method = "post" action = "{{ url_for('wholesalerDeleteItem') }}">
+                <button type="submit">
+                    Delete Item
+                </button>
+            </form></h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+        <h2>Manage Retailers</h2>
+        <br>
+        <div id="cards">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="card box-shadow">
+                  <img src="../static/add_person.png" class="card-img-top" alt="..." width="50%" height="50%">
+                  <div class="card-body">
+                    <h5 class="card-title"><form method = "post" action = "{{ url_for('wholesalerAddItem') }}">
+                      <button type="submit">
+                          Add Retailer
+                      </button>
+                  </form></h5>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="card box-shadow">
+                  <img src="../static/delete_person.png" class="card-img-top" alt="..." width="50%" height="50%">
+                  <div class="card-body">
+                    <h5 class="card-title"><form method = "post" action = "{{ url_for('wholesalerDeleteItem') }}">
+                      <button type="submit">
+                          Delete Retailer
+                      </button>
+                  </form></h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h2>Product Categories</h2>
+        <br>
+        <div id="cards">
+            <div class="container">
+              <div class="row">
+                <div class="col-sm-4">
+                  <div class="card box-shadow">
+                    <img src="../static/snacksalt.jpg" class="card-img-top" alt="..." width="100%" height="100%">
+                    <div class="card-body">
+                      <h5 class="card-title">Snacks and Drinks</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="card box-shadow">
+                    <img src="../static/fruveg.jpg" class="card-img-top" alt="..." width="100%" height="100%">
+                    <div class="card-body">
+                      <h5 class="card-title">Fruits And Vegetables</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="card box-shadow">
+                    <img src="../static/food grains.jpg" class="card-img-top" alt="..."width="100%" height="100%">
+                    <div class="card-body">
+                      <h5 class="card-title">Food Grains,Oils And Masalas</h5>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br><br><br>
+          <div id="cards">
+            <div class="container">
+              <div class="row">
+                <div class="col-sm-4">
+                  <div class="card box-shadow">
+                    <img src="../static/dairyalt.jpg" class="card-img-top" alt="..." width="100%" height="100%">
+                    <div class="card-body">
+                      <h5 class="card-title">Dairy Products</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="card box-shadow">
+                    <div class="card-body">
+                      <h5 class="card-title"></h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="card box-shadow">
+                    <img src="../static/detergents.jpg" class="card-img-top" alt="..." width="100%" height="100%">
+                    <div class="card-body">
+                      <h5 class="card-title">Others</h5>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
     </body>
 </html>
