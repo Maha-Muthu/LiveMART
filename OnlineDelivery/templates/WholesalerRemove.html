@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>WholesalerUpload</title>
+        <title>WholesalerDelete</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -12,8 +12,15 @@
     <body>
         <h1>Delete Item</h1>
         <br>
+        
+        <div class="topnav">
+          <a href="{{ url_for('wholesalerHome')}}">Home</a>
+          <a href="{{ url_for('logout')}}">Logout</a>
+        </div>
+        <br>
         <h2>Items You Currently Have</h2>
         <br>
+
         <table class="table">
             <thead class="thead-dark">
               <tr>
@@ -23,25 +30,17 @@
                 <th scope="col">Item Quantity</th>
                 <th scope="col">Item Category</th>
               </tr>
-              <!--{% endfor %}-->
-            </thead>
-            <script>
-              function multiply(a,b)
-              {
-                return a*b;
-              }
-              </script>
-              
+            </thead>              
             <tbody>
-              <!--{% for i in range %}-->
+              {% for row in rows %}
               <tr>
-                <td scope="row">Sample</td>
-                <td scope="row">Sample</td>
-                <td scope="row">Sample</td>
-                <td scope="row">Sample</td>
-                <td scope="row">Sample</td>
+                <td scope="row">{{row[0]}}</td>
+                <td scope="row">{{row[1]}}</td>
+                <td scope="row">{{row[2]}}</td>
+                <td scope="row">{{row[3]}}</td>
+                <td scope="row">{{row[4]}}</td>
               </tr>
-              <!--{% endfor %}-->
+              {% endfor %}
             </tbody>
           </table>
           <br>
