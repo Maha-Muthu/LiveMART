@@ -4,7 +4,7 @@ import sqlite3
 app = Flask(__name__)
 app.secret_key = "E-Commerce"
 
-CustomerCart=[]
+CustomerCart={}
 
 @app.route('/', methods=["GET", "POST"])
 def main():
@@ -35,7 +35,7 @@ def logged():
                 if len(rows)>=1:
                     if rows[0][2]==password:
                         session['Id']=rows[0][0]
-                        return redirect(url_for('retailerOrder'))
+                        return redirect(url_for('retailerHome'))
                     else:
                         flash('Password Incorrect ... Try Again !!')
                 else :
@@ -184,9 +184,32 @@ def addToCustomerCart():
     val =session.get('Id', None)
     Id = request.form['Id']
     quantity = request.form['quantity']
-    print(val,Id,quantity)
     global CustomerCart
-    return "Added To Cart"
+    if(val not in CustomerCart):
+        Items={Id:quantity}
+        CustomerCart[val]=Items
+    else :
+        if(Id not in CustomerCart[val]):
+            CustomerCart[val][Id]=quantity
+        else:
+            CustomerCart[val][Id]+=quantity
+    connection = sqlite3.connect("database.db")
+    cur = connection.cursor()
+    cur.execute("SELECT ItemQuantity FROM Items WHERE ItemId=?",(Id,))
+    rows = cur.fetchall()
+    newval=int(rows[0][0])-int(quantity)
+    cur.execute("UPDATE Items SET ItemQuantity=? WHERE ItemId=?", (newval,Id,))
+    connection.commit()
+    return redirect(url_for('customerHome'))
+
+@app.route('/viewCustomerCart',methods=['POST','GET'])
+def viewCustomerCart():
+    val =session.get('Id', None)
+    global CustomerCart
+    Items=CustomerCart[val]
+    cur.execute("SELECT * FROM Items WHERE ItemId=?",(Id,))
+    rows = cur.fetchall()
+    return render_template("CustomerCart.html",cart=CustomerCart[val])
     
 
 if __name__ == "__main__":

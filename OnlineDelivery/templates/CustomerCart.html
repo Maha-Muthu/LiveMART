@@ -15,8 +15,8 @@
     Cart
   </h1>
   <div class="topnav">
-    <a class="active" href="#home">Home</a>
-    <a href="#Cart">Cart</a>
+    <a href="#home">Home</a>
+    <a class="active"href="#">Cart</a>
     <a href="#Transactions">Transactions</a>
     <a href="#Logout">Logout</a>
   </div>
@@ -28,21 +28,23 @@
   <table class="table">
     <thead class="thead-dark">
       <tr>
-        <th scope="col">Item name</th>
+        <th scope="col">Item Name</th>
         <th scope="col">Item Quantity</th>
-        <th scope="col">Item Price</th>
-        <th scope="col">Handle</th>
-        <th scope="col"></th>
+        <th scope="col">Total Price</th>
+        <th scope="col">Remove</th>
+        <th scope="col">Buffer</th>
       </tr>
     </thead>
     <tbody>
+      {% for item in cart %}
       <tr>
+        <td scope="row">{{item[0]}}</td>
+        <td scope="row">{{item[1]}}</td>
         <td scope="row">Sample</td>
-        <td>Sample</td>
-        <td>Sample</td>
-        <td>Sample</td>
-        <td>Remove</td>
+        <td scope="row">Sample</td>
+        <td scope="row">Remove</td>
       </tr>
+      {% endfor %}
     </tbody>
   </table>
   <br><br>
