@@ -1,45 +1,61 @@
 <!DOCTYPE html>
 <html>
     <head>
-
+        <title>WholesalerUpload</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="../static/css/wholesalerremove.css">     
     </head>
     <body>
         <h1>Delete Item</h1>
-        <img src="{{rows[6]}},'.base64_encode({{rows[7]}}).'"/>
+        <br>
         <h2>Items You Currently Have</h2>
         <br>
-        <table>
-            <thead>
-                <tr>
-                    <th>ItemId</th>
-                    <th>ItemName</th>
-                    <th>ItemPrice</th>
-                    <th>ItemQuantity</th>
-                    <th>ItemCategory</th>
-                </tr>
+        <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Item Id</th>
+                <th scope="col">Item Name</th>
+                <th scope="col">Item Price</th>
+                <th scope="col">Item Quantity</th>
+                <th scope="col">Item Category</th>
+              </tr>
+              <!--{% endfor %}-->
             </thead>
+            <script>
+              function multiply(a,b)
+              {
+                return a*b;
+              }
+              </script>
+              
             <tbody>
-                {% for row in rows %}
-                <tr>                    
-                    <td>{{row[0]}}</td>
-                    <td>{{row[1]}}</td>
-                    <td>{{row[2]}}</td>
-                    <td>{{row[3]}}</td>
-                    <td>{{row[4]}}</td>                   
-                </tr>
-                {% endfor %}
+              <!--{% for i in range %}-->
+              <tr>
+                <td scope="row">Sample</td>
+                <td scope="row">Sample</td>
+                <td scope="row">Sample</td>
+                <td scope="row">Sample</td>
+                <td scope="row">Sample</td>
+              </tr>
+              <!--{% endfor %}-->
             </tbody>
-        </table>
-        <br><br>
+          </table>
+          <br>
         <h2>Item You Wish To Delete</h2>
-        <div class="container">
+        <br>
+        <div class="container" style="width: 50%;">
             <form method = "post" action = "{{ url_for('wholesalerRemoveItem') }}">
-              <div class="form-group">
+              <div class="form-group" style="text-align: center; font-size: large;">
                 <label for="Item Id">Item Id</label>
                 <input type="text" class="form-control" placeholder="Enter Item Id" name="itemId" required>
               </div>
-              <br>
-              <button type="submit" class="btn btn-default">Submit</button>
+              <center>
+              <button type="submit"class="btn btn-default">Submit</button>
+            </center>
             </form>
           </div>
     </body>
