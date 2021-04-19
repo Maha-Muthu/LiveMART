@@ -2,7 +2,12 @@
 <html>
 <head>
   <title>RetailerHomePage</title>
-  <link rel="stylesheet" href="../static/css/rh.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="../static/css/retailerhome.css">
 </head>
 <body>
   <h1>
@@ -14,40 +19,40 @@
     <a href="#Transactions">Transactions</a>
     <a href="{{ url_for('logout') }}">Logout</a>
   </div>
-  <link rel="stylesheet" href="../static/css/navbar.css">
-  <div class="container">
     <h2>
       Manage Items
     </h2>
     <br>
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-md-6" width=100%>
-            <a href="{{ url_for('retailerAddItem') }}">
-              <div class="card box-shadow">
-                <center><img src="../static/add_items.PNG" class="card-img-top" alt="..." width="50%" height="50%"></center>
-                <div class="card-body">
-                  <h5 class="card-title">
-                    <center>Add Item</center>
-                  </h5>
-                </div>
+  <div id="cards">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6">
+          <a href="{{ url_for('wholesalerAddItem') }}">
+            <div class="card box-shadow">
+              <img src="../static/add_items.PNG" class="card-img-top" alt="..." width="50%" height="50%">
+              <div class="card-body">
+                <h5 class="card-title">
+                  Add New Item
+                </h5>
               </div>
-            </a>
-          </div>
-          <div class="col-md-6" width=100%>
-            <a href="{{ url_for('retailerDeleteItem') }}">
-              <div class="card box-shadow">
-                <center><img src="../static/remove_items.PNG" class="card-img-top" alt="..." width="50%" height="50%"></center>
-                <div class="card-body">
-                  <h5 class="card-title">
-                    <center>Delete Item</center>
-                  </h5>
-                </div>
-              </div>
-            </a>
-          </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-sm-6">
+          <a href="{{ url_for('wholesalerDeleteItem') }}">
+            <img src="../static/remove_items.PNG" class="card-img-top" alt="..." width="50%" height="50%">
+            <div class="card-body">
+              <h5 class="card-title">
+                Delete Item
+              </h5>
+            </div>
+        </div>
+        </a>
+        <div class="card box-shadow">
         </div>
       </div>
+    </div>
+  </div>
     <h2>
       Shop by Category
     </h2>
@@ -60,7 +65,7 @@
               <div class="card box-shadow">
                 <img src="../static/all.jpg" class="card-img-top" alt="..." width="100%" height="100%">
                 <div class="card-body">
-                  <h5 class="card-title">All Products</h5>
+                  <center><h5 class="card-title">All Products</h5></center>
                 </div>
               </div>
             </a>
@@ -70,7 +75,7 @@
               <div class="card box-shadow">
                 <img src="../static/fruveg.jpg" class="card-img-top" alt="..." width="100%" height="100%">
                 <div class="card-body">
-                  <h5 class="card-title">Fruits And Vegetables</h5>
+                  <center><h5 class="card-title">Fruits And Vegetables</h5></center>
                 </div>
               </div>
             </a>
@@ -80,7 +85,7 @@
               <div class="card box-shadow">
                 <img src="../static/food grains.jpg" class="card-img-top" alt="..." width="100%" height="100%">
                 <div class="card-body">
-                  <h5 class="card-title">Food Grains,Oils And Masalas</h5>
+                  <center><h5 class="card-title">Food Grains,Oils And Masalas</h5></center>
                 </div>
               </div>
             </a>
@@ -97,7 +102,7 @@
               <div class="card box-shadow">
                 <img src="../static/dairyalt.jpg" class="card-img-top" alt="..." width="100%" height="100%">
                 <div class="card-body">
-                  <h5 class="card-title">Dairy Products</h5>
+                  <center><h5 class="card-title">Dairy Products</h5></center>
                 </div>
               </div>
             </a>
@@ -107,7 +112,7 @@
               <div class="card box-shadow">
                 <img src="../static/snacksalt.jpg" class="card-img-top" alt="..." width="100%" height="100%">
                 <div class="card-body">
-                  <h5 class="card-title">Snacks And Drinks</h5>
+                  <center><h5 class="card-title">Snacks And Drinks</h5></center>
                 </div>
               </div>
             </a>
@@ -117,7 +122,7 @@
               <div class="card box-shadow">
                 <img src="../static/detergents.jpg" class="card-img-top" alt="..." width="100%" height="100%">
                 <div class="card-body">
-                  <h5 class="card-title">Others</h5>
+                  <center><h5 class="card-title">Others</h5></center>
                 </div>
               </div>
             </a>
