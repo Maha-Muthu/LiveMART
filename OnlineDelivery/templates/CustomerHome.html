@@ -21,43 +21,51 @@
     <a href="#Transactions">Transactions</a>
     <a href="{{ url_for('logout') }}">Logout</a>
   </div>
-  <br><br>
+  <br>
+  {% with messages=get_flashed_messages()%}
+      {% if messages %}
+        {% for message in messages %}
+          <p style="color:rebeccapurple;">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <br>
   <h2>
     Shop By Category
   </h2>
-<br><br>
+  <br><br>
   <div id="cards">
     <div class="container">
       <div class="row">
         <div class="col-sm-4">
           <a href="{{ url_for('customerOrderAll')}}">
-          <div class="card box-shadow">
-            <img src="../static/all.jpg" class="card-img-top" alt="..." width="100%" height="100%">
-            <div class="card-body">
-              <h5 class="card-title">All Products</h5>
+            <div class="card box-shadow">
+              <img src="../static/all.jpg" class="card-img-top" alt="..." width="100%" height="100%">
+              <div class="card-body">
+                <h5 class="card-title">All Products</h5>
+              </div>
             </div>
-            </div>
-        </a>
+          </a>
         </div>
         <div class="col-sm-4">
-          <a href="#">
-          <div class="card box-shadow">
-            <img src="../static/fruveg.jpg" class="card-img-top" alt="..." width="100%" height="100%">
-            <div class="card-body">
-              <h5 class="card-title">Fruits And Vegetables</h5>
+          <a href="{{ url_for('customerOrderCategory',category='Fruits And Vegetables')}}">
+            <div class="card box-shadow">
+              <img src="../static/fruveg.jpg" class="card-img-top" alt="..." width="100%" height="100%">
+              <div class="card-body">
+                <h5 class="card-title">Fruits And Vegetables</h5>
+              </div>
             </div>
-          </div>
-        </a>
+          </a>
         </div>
         <div class="col-sm-4">
-          <a href="#">
-          <div class="card box-shadow">
-            <img src="../static/food grains.jpg" class="card-img-top" alt="..."width="100%" height="100%">
-            <div class="card-body">
-              <h5 class="card-title">Food Grains,Oils And Masalas</h5>
+          <a href="{{ url_for('customerOrderCategory',category='Food Grains , Oils And Masalas')}}">
+            <div class="card box-shadow">
+              <img src="../static/food grains.jpg" class="card-img-top" alt="..." width="100%" height="100%">
+              <div class="card-body">
+                <h5 class="card-title">Food Grains,Oils And Masalas</h5>
+              </div>
             </div>
-          </div>
-        </a>
+          </a>
         </div>
       </div>
     </div>
@@ -67,35 +75,40 @@
     <div class="container">
       <div class="row">
         <div class="col-sm-4">
-          <a href="#">
-          <div class="card box-shadow">
-            <img src="../static/dairyalt.jpg" class="card-img-top" alt="..." width="100%" height="100%">
-            <div class="card-body">
-              <h5 class="card-title">Dairy Products</h5>
+          <a href="{{ url_for('customerOrderCategory',category='Diary Products')}}">
+            <div class="card box-shadow">
+              <img src="../static/dairyalt.jpg" class="card-img-top" alt="..." width="100%" height="100%">
+              <div class="card-body">
+                <h5 class="card-title">Dairy Products</h5>
+              </div>
             </div>
-          </div>
-        </a>
+          </a>
         </div>
         <div class="col-sm-4">
-          <a href="#">
-          <div class="card box-shadow">
-            <img src="../static/snacksalt.jpg" class="card-img-top" alt="..." width="100%" height="100%">
-            <div class="card-body">
-              <h5 class="card-title">Snacks And Drinks</h5>
+          <a href="{{ url_for('customerOrderCategory',category='Snacks And Drinks')}}">
+            <div class="card box-shadow">
+              <img src="../static/snacksalt.jpg" class="card-img-top" alt="..." width="100%" height="100%">
+              <div class="card-body">
+                <h5 class="card-title">Snacks And Drinks</h5>
+              </div>
             </div>
-          </div>
-        </a>
+          </a>
         </div>
         <div class="col-sm-4">
-          <a href="#">
-          <div class="card box-shadow">
-            <img src="../static/detergents.jpg" class="card-img-top" alt="..." width="100%" height="100%">
-            <div class="card-body">
-              <h5 class="card-title">Others</h5>
+          <a href="{{ url_for('customerOrderCategory',category='Others')}}">
+            <div class="card box-shadow">
+              <img src="../static/detergents.jpg" class="card-img-top" alt="..." width="100%" height="100%">
+              <div class="card-body">
+                <h5 class="card-title">Others</h5>
+              </div>
             </div>
-          </div>
-        </a>
+          </a>
         </div>
       </div>
     </div>
   </div>
+  <br>
+  <br>
+</body>
+
+</html>

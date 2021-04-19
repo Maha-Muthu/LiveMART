@@ -1,9 +1,12 @@
 from flask import *
 import sqlite3
+import os
+
 
 app = Flask(__name__)
 app.secret_key = "E-Commerce"
 
+global CustomerCart
 CustomerCart={}
 
 @app.route('/', methods=["GET", "POST"])
@@ -53,6 +56,41 @@ def logged():
                     flash('Username Incorrect ... Try Again !!')
     return render_template('index.html')
 
+def IdIncrement(role):
+    if(role=="Customer"):
+        cusid=0
+        if not os.path.exists('CustomerId.txt'):
+            with open('CustomerId.txt','w') as f:
+                f.write('0')
+        with open('CustomerId.txt','r') as f:
+            cusid = int(f.read())
+            cusid+=1 
+        with open('CustomerId.txt','w') as f:
+            f.write(str(cusid)) 
+        return cusid
+    elif(role=="Retailer"):
+        rid=0
+        if not os.path.exists('RetailerId.txt'):
+            with open('RetailerId.txt','w') as f:
+                f.write('0')
+        with open('RetailerId.txt','r') as f:
+            rid = int(f.read())
+            rid+=1 
+        with open('RetailerId.txt','w') as f:
+            f.write(str(rid)) 
+        return rid
+    else :
+        whid=0
+        if not os.path.exists('WholesalerId.txt'):
+            with open('WholesalerId.txt','w') as f:
+                f.write('0')
+        with open('WholesalerId.txt','r') as f:
+            whid = int(f.read())
+            whid+=1 
+        with open('WholesalerId.txt','w') as f:
+            f.write(str(whid)) 
+        return whid
+
 @app.route('/signup',methods=['POST','GET'])
 def signup():
     return render_template("SignUp.html") 
@@ -72,13 +110,16 @@ def signed():
                 cur = connection.cursor()
                 for role in roles:
                     if role=="Wholesaler":
-                        cur.execute("INSERT INTO Wholesalers (username,password,eMailId,PhoneNumber,Latitude,Longitude) VALUES (?,?,?,?,?,?);", (uname,password,email,phone_num,latitude,longitude))
+                        wid="WS"+str(IdIncrement("Wholesaler"))
+                        cur.execute("INSERT INTO Wholesalers (Id,username,password,eMailId,PhoneNumber,Latitude,Longitude) VALUES (?,?,?,?,?,?,?);", (wid,uname,password,email,phone_num,latitude,longitude))
                         connection.commit()
                     elif role=="Retailer":
-                        cur.execute("INSERT INTO Retailers (username,password,eMailId,PhoneNumber,Latitude,Longitude) VALUES (?,?,?,?,?,?);", (uname,password,email,phone_num,latitude,longitude))
+                        rid="RT"+str(IdIncrement("Retailer"))
+                        cur.execute("INSERT INTO Retailers (Id,username,password,eMailId,PhoneNumber,Latitude,Longitude) VALUES (?,?,?,?,?,?,?);", (rid,uname,password,email,phone_num,latitude,longitude))
                         connection.commit()
                     elif role=="Customer":
-                        cur.execute("INSERT INTO Customers (username,password,eMailId,PhoneNumber,Latitude,Longitude) VALUES (?,?,?,?,?,?);", (uname,password,email,phone_num,latitude,longitude))
+                        cid="CS"+str(IdIncrement("Customer"))
+                        cur.execute("INSERT INTO Customers (Id,username,password,eMailId,PhoneNumber,Latitude,Longitude) VALUES (?,?,?,?,?,?,?);", (cid,uname,password,email,phone_num,latitude,longitude))
                         connection.commit()
         except:
             connection.rollback()
@@ -210,6 +251,15 @@ def customerOrderAll():
     rows = cur.fetchall()
     return render_template("CustomerOrder.html",rows=rows,range=range(0,len(rows),4),len=len(rows))
 
+@app.route('/customerOrderCategory/<string:category>',methods=['GET'])
+def customerOrderCategory(category):
+    curid =session.get('Id', None)
+    connection = sqlite3.connect("database.db")
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM Items WHERE ItemCategory=?",(category,))
+    rows = cur.fetchall()
+    return render_template("CustomerOrder.html",rows=rows,range=range(0,len(rows),4),len=len(rows))
+
 @app.route('/addToCustomerCart',methods=['POST','GET'])
 def addToCustomerCart():
     val =session.get('Id', None)
@@ -224,6 +274,7 @@ def addToCustomerCart():
             CustomerCart[val][Id]=quantity
         else:
             CustomerCart[val][Id]=int(CustomerCart[val][Id])+int(quantity)
+    print(CustomerCart)
     connection = sqlite3.connect("database.db")
     cur = connection.cursor()
     cur.execute("SELECT ItemQuantity FROM Items WHERE ItemId=?",(Id,))
@@ -233,16 +284,35 @@ def addToCustomerCart():
     connection.commit()
     return redirect(url_for('customerHome'))
 
+@app.route('/removeFromCustomerCart',methods=['POST','GET'])
+def removeFromCustomerCart():
+    val =session.get('Id', None)
+    Id = request.form['Id']
+    quantity = request.form['quant']
+    global CustomerCart
+    del CustomerCart[val][Id]
+    connection = sqlite3.connect("database.db")
+    cur = connection.cursor()
+    cur.execute("SELECT ItemQuantity FROM Items WHERE ItemId=?",(Id,))
+    rows = cur.fetchall()
+    newval=int(rows[0][0])+int(quantity)
+    cur.execute("UPDATE Items SET ItemQuantity=? WHERE ItemId=?", (newval,Id,))
+    connection.commit()
+    return redirect(url_for('customerHome'))
+
+
 @app.route('/viewCustomerCart',methods=['POST','GET'])
 def viewCustomerCart():
     val =session.get('Id', None)
     global CustomerCart
+    if (val not in CustomerCart):
+        flash("Check Out Our Products And Start Adding Items To Cart")
+        return redirect(url_for('customerHome'))
     ItemIds=tuple(CustomerCart[val].keys())
     connection = sqlite3.connect("database.db")
     cur = connection.cursor()
     cur.execute('SELECT ItemId,ItemName,ItemPrice FROM Items where ItemId in (' + ','.join(map(str, ItemIds)) + ')')
     rows = cur.fetchall()
-    print(rows)
     totalcost=[]
     qt=list((CustomerCart[val]).values())
     for i in range (len(rows)):

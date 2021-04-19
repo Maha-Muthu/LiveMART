@@ -5,18 +5,29 @@
   <title>CustomerCart</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="../static/css/customercart.css">
+  <style>
+    th {
+      text-align: center;
+    }
+
+    td {
+      text-align: center;
+    }
+  </style>
 </head>
+
 <body>
   <h1>
     Cart
   </h1>
   <div class="topnav">
     <a href="{{ url_for('customerHome')}}">Home</a>
-    <a class="active"href="#">Cart</a>
+    <a class="active" href="#">Cart</a>
     <a href="#Transactions">Transactions</a>
     <a href="{{ url_for('logout')}}">Logout</a>
   </div>
@@ -42,14 +53,24 @@
         <td scope="row">{{quantity[i]}}</td>
         <td scope="row">{{rows[i][2]}}</td>
         <td scope="row">{{totalcost[i]}}</td>
-        <td scope="row">Sample Item</td>
+        <td scope="row">
+
+          <form method="post" action="{{ url_for('removeFromCustomerCart') }}">
+            <input type="hidden" name="Id" value="{{rows[i][0]}}">
+            <input type="hidden" name=quant value="{{quantity[i]}}">
+            <button type="submit" style="border: none;">
+              <i class="fa fa-remove" style="font-size:24px"></i>
+            </button>
+          </form>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
-  <h1>Total Amount In Cart {{totalsum}}</h1>
+  <br><br>
+  <center><h2>Total Amount Rs {{totalsum}}</h2></center>
   <br><br>
   <div class="text-center">
-        <a href="#" class="btn btn-primary">Order Online</a>
-        <a href="#" class="btn btn-primary">Order Offline</a>
-</div>
+    <a href="#" class="btn btn-primary">Order Online</a>
+    <a href="#" class="btn btn-primary">Order Offline</a>
+  </div>
