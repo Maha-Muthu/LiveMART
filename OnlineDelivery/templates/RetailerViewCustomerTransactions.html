@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>RetailerTransactions</title>
+  <title>RetailerViewCustomerTransactions</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -11,18 +11,18 @@
 </head>
 <body>
   <h1>
-    Transactions
+    Record of Customer Transactions
   </h1>
   <div class="topnav">
     <a href="#">Home</a>
     <a href="#Cart">Cart</a>
-    <a class="active" href="#Transactions">Transactions</a>
-    <a href="#Transactions">Customer Transactions</a>
+    <a href="#Transactions">Transactions</a>
+    <a class="active" href="#Transactions">Customer Transactions</a>
     <a href="{{ url_for('logout') }}">Logout</a>
   </div>
   <br><br>
   <h2>
-    Your Transactions:
+    List of Customer Transactions:
   </h2>
   <br><br>
   <table class="table">
