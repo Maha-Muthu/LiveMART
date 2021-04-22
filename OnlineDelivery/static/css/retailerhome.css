@@ -53,3 +53,9 @@ body
 {
     background-color: rgb(224, 193, 164);
 }
+a
+{text-decoration: none;} 
+a:hover
+{text-decoration: none;} 
+a:visited
+{text-decoration: none;}

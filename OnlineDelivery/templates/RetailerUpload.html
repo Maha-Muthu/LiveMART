@@ -14,7 +14,7 @@
     Upload Item
   </h1>
   <div class="topnav">
-    <a href="#">Home</a>
+    <a href="{{url_for('retailerHome')}}">Home</a>
     <a href="#Cart">Cart</a>
     <a href="#Transactions">Transactions</a>
     <a href="#Transactions">Customer Transactions</a>
@@ -22,7 +22,7 @@
   </div>
   <br>
   <div class="container" style="width: 50%;">
-    <form method = "post" action = "{{ url_for('wholesalerUpdateItem') }}">
+    <form method = "post" action = "{{ url_for('retailerUpdateItem') }}">
       <div class="form-group" style="text-align: center;">
         <label for="Category" style="color: rgb(179, 32, 32);">Item Category</label>
         <select class="form-control" name=itemCategory required>
