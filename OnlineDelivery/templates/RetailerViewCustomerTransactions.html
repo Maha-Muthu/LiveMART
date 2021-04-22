@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RetailerViewCustomerTransactions</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="../static/css/retailertransactions.css">
+</head>
+<body>
+  <h1>
+    Record of Customer Transactions
+  </h1>
+  <div class="topnav">
+    <a href="#">Home</a>
+    <a href="#Cart">Cart</a>
+    <a href="#Transactions">Transactions</a>
+    <a class="active" href="#Transactions">Customer Transactions</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+  </div>
+  <br><br>
+  <h2>
+    List of Customer Transactions:
+  </h2>
+  <br><br>
+  <table class="table">
+    <thead class="thead-dark">
+      <tr style="color: rgb(179, 32, 32);">
+        <th scope="col">Item name</th>
+        <th scope="col">Item Quantity</th>
+        <th scope="col">Item Price</th>
+        <th scope="col">Handle</th>
+        <th scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td scope="row">Sample</td>
+        <td>Sample</td>
+        <td>Sample</td>
+        <td>Sample</td>
+        <td>Sample</td>
+      </tr>
+    </tbody>
+  </table>
