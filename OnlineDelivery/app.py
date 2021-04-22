@@ -215,6 +215,15 @@ def removeRetailers():
 
 # RETAILER
 
+@app.route('/retailerOrderAll',methods=['POST','GET'])
+def retailerOrderAll():
+    curid =session.get('Id', None)
+    connection = sqlite3.connect("database.db")
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM Items WHERE ItemOwnerId LIKE 'WS%'")
+    rows = cur.fetchall()
+    return render_template("RetailerOrder.html",rows=rows,range=range(0,len(rows),4),len=len(rows))
+
 @app.route('/retailerAddItem',methods=['POST','GET'])
 def retailerAddItem():
     val =session.get('Id', None)
@@ -231,14 +240,7 @@ def retailerDeleteItem():
     return render_template("RetailerRemoveItem.html",rows=rows)
 
 
-@app.route('/retailerOrderAll',methods=['POST','GET'])
-def retailerOrderAll():
-    curid =session.get('Id', None)
-    connection = sqlite3.connect("database.db")
-    cur = connection.cursor()
-    cur.execute("SELECT * FROM Items ")
-    rows = cur.fetchall()
-    return render_template("RetailerOrder.html",rows=rows,range=range(0,len(rows),4),len=len(rows))
+
 
 # CUSTOMER
 
@@ -247,7 +249,7 @@ def customerOrderAll():
     curid =session.get('Id', None)
     connection = sqlite3.connect("database.db")
     cur = connection.cursor()
-    cur.execute("SELECT * FROM Items ")
+    cur.execute("SELECT * FROM Items WHERE ItemOwnerId LIKE 'RT%'")
     rows = cur.fetchall()
     return render_template("CustomerOrder.html",rows=rows,range=range(0,len(rows),4),len=len(rows))
 
@@ -325,6 +327,53 @@ def logout():
     val = session.get('Id', None)
     session.pop(val, None)
     return render_template("index.html")
+
+#Oder Coder
+@app.route('/placeOrderOnline',methods=['POST','GET'])
+def placeOrderOnline():
+    val=session.get('Id',None)
+    global CustomerCart
+    Items=CustomerCart[val]
+    print("Maha",Items)
+    key=list(Items.keys())
+    item=""
+    qty=""
+    owner=""
+    total_price=0
+    print("Balaji",key)
+    for i in range(0,len(Items)):
+        qt=Items.get(key[i])
+        
+        
+        item_id=key[i]
+        qty+=qt
+        item+=str(item_id)
+        item
+        connection = sqlite3.connect("database.db")
+        cur = connection.cursor()
+        cur.execute("SELECT ItemPrice,ItemOwnerId FROM Items WHERE ItemId=?",(item_id,))
+        rows = cur.fetchall()
+        for i in range(0,len(rows)):
+            for j in range(0,2):
+                total_price+=(int(rows[i][0])*int(qt))
+                owner+=str(rows[i][1])
+
+    print(item,qty,owner,total_price)
+    with sqlite3.connect("Database.db") as connection:
+                cur = connection.cursor()
+                cur.execute("INSERT INTO Orders (OrderedBy,OrderedTo,ItemsOrdered,QuantityOrdered,TotalCost,Status) VALUES (?,?,?,?,?,?);", (val,owner,item,qty,total_price,'Ordered'))
+                connection.commit()
+    
+    return "Success"
+
+                
+        
+        
+        
+
+        
+    
+    
 
 
 if __name__ == "__main__":

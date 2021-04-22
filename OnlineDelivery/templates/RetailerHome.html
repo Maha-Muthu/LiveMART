@@ -27,7 +27,7 @@
     <div class="container">
       <div class="row">
         <div class="col-sm-6">
-          <a href="{{ url_for('wholesalerAddItem') }}">
+          <a href="#">
             <div class="card box-shadow">
               <img src="../static/add_items.PNG" class="card-img-top" alt="..." width="50%" height="50%">
               <div class="card-body">
@@ -39,7 +39,7 @@
           </a>
         </div>
         <div class="col-sm-6">
-          <a href="{{ url_for('wholesalerDeleteItem') }}">
+          <a href="#">
             <img src="../static/remove_items.PNG" class="card-img-top" alt="..." width="50%" height="50%">
             <div class="card-body">
               <h5 class="card-title">
@@ -61,7 +61,7 @@
       <div class="container">
         <div class="row">
           <div class="col-sm-4">
-            <a href="#">
+            <a href="{{ url_for('retailerOrderAll') }}">
               <div class="card box-shadow">
                 <img src="../static/all.jpg" class="card-img-top" alt="..." width="100%" height="100%">
                 <div class="card-body">
