@@ -30,11 +30,20 @@
   </h1>
   <div class="topnav">
     <a class="active" href="#">Home</a>
-    <a href="#Cart">Cart</a>
+    <a href="{{ url_for('viewRetailerCart') }}">Cart</a>
     <a href="#Transactions">Transactions</a>
     <a href="#Transactions">Customer Transactions</a>
     <a href="{{ url_for('logout') }}">Logout</a>
   </div>
+  <br>
+  {% with messages=get_flashed_messages()%}
+      {% if messages %}
+        {% for message in messages %}
+          <p style="color:rebeccapurple;">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <br>
   <h2>
     Manage Items
   </h2>

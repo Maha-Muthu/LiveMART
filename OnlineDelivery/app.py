@@ -1,13 +1,15 @@
 from flask import *
 import sqlite3
 import os
-
+import mpu
 
 app = Flask(__name__)
 app.secret_key = "E-Commerce"
 
 global CustomerCart
 CustomerCart={}
+global RetailerCart
+RetailerCart={}
 
 @app.route('/', methods=["GET", "POST"])
 def main():
@@ -128,13 +130,32 @@ def signed():
             connection.close()
     return render_template('index.html')
 
+def getlocation(rows):
+    val=session.get('Id',None)
+    connection = sqlite3.connect("database.db")
+    cur = connection.cursor()
+    cur.execute("SELECT Latitude,Longitude FROM Customers  WHERE Id=?",(val,))
+    row=cur.fetchall()
+    distance=[]
+    for i in range(0,len(rows)):
+        ownerId=rows[i][5]
+        cur.execute("SELECT Latitude,Longitude FROM Retailers WHERE Id=?",(ownerId,))
+        r=cur.fetchall()
+        lat1=float(row[0][0])
+        lon1=float(row[0][1])
+        lat2=float(r[0][0])
+        lon2=float(r[0][1])
+        dist = mpu.haversine_distance((lat1, lon1), (lat2, lon2))
+        dist=int(dist)
+        dist=str(dist)+" "+"Kms Away From You"
+        distance.append(dist)
+    return distance
+
+#WHOLESALER
+
 @app.route('/wholesalerHome')
 def wholesalerHome():
-    val =session.get('Id', None)
-    connection = sqlite3.connect("database.db")
     return render_template("WholesalerHome.html")
-   
-#WHOLESALER
 
 @app.route('/wholesalerAddItem',methods=['POST','GET'])
 def wholesalerAddItem():
@@ -172,15 +193,28 @@ def wholesalerDeleteItem():
     rows = cur.fetchall()
     return render_template("WholesalerRemove.html",rows=rows)
 
-
 @app.route('/wholesalerRemoveItem',methods=['POST','GET'])
 def wholesalerRemoveItem():
     if request.method == 'POST':
         try:
             itemId = request.form['itemId']
+            
+            global CustomerCart
+            customerIds=list(CustomerCart.keys())
+            for i in customerIds:
+                print(i)
+                print(CustomerCart)
+                itemIds=list(i.keys())
+
+                for j in itemIds:
+                    print(j)
+                    if itemId in j:
+                        del CustomerCart[i][j] 
+            print(CustomerCart)
             with sqlite3.connect("Database.db") as connection:
                 cur = connection.cursor()
                 cur.execute("DELETE FROM Items  WHERE ItemId=?", (itemId,))
+                cur.execute
                 connection.commit()
         except:
             connection.rollback()
@@ -259,6 +293,71 @@ def retailerOrderCategory(category):
     rows = cur.fetchall()
     return render_template("RetailerOrder.html",rows=rows,range=range(0,len(rows),4),len=len(rows))
 
+@app.route('/addToRetailerCart',methods=['POST','GET'])
+def addToRetailerCart():
+    val =session.get('Id', None)
+    Id = request.form['Id']
+    quantity = request.form['quantity']
+    global RetailerCart
+    if(val not in RetailerCart):
+        Items={Id:quantity}
+        RetailerCart[val]=Items
+    else :
+        if(Id not in RetailerCart[val]):
+            RetailerCart[val][Id]=quantity
+        else:
+            RetailerCart[val][Id]=int(RetailerCart[val][Id])+int(quantity)
+    connection = sqlite3.connect("database.db")
+    cur = connection.cursor()
+    cur.execute("SELECT ItemQuantity FROM Items WHERE ItemId=?",(Id,))
+    rows = cur.fetchall()
+    newval=int(rows[0][0])-int(quantity)
+    cur.execute("UPDATE Items SET ItemQuantity=? WHERE ItemId=?", (newval,Id,))
+    connection.commit()
+    return redirect(url_for('retailerOrderAll'))
+
+@app.route('/removeFromRetailerCart',methods=['POST','GET'])
+def removeFromRetailerCart():
+    val =session.get('Id', None)
+    Id = request.form['Id']
+    quantity = request.form['quant']
+    global RetailerCart
+    del RetailerCart[val][Id]
+    connection = sqlite3.connect("database.db")
+    cur = connection.cursor()
+    cur.execute("SELECT ItemQuantity FROM Items WHERE ItemId=?",(Id,))
+    rows = cur.fetchall()
+    newval=int(rows[0][0])+int(quantity)
+    cur.execute("UPDATE Items SET ItemQuantity=? WHERE ItemId=?", (newval,Id,))
+    connection.commit()    
+    return redirect(url_for('viewRetailerCart'))
+
+@app.route('/viewRetailerCart',methods=['POST','GET'])
+def viewRetailerCart():
+    val =session.get('Id', None)
+    global RetailerCart
+    if (val not in RetailerCart):
+        flash("Check Out Our Products And Start Adding Items To Cart")
+        return redirect(url_for('retailerHome'))
+    ItemIds=list(RetailerCart[val].keys())
+    qt=list((RetailerCart[val]).values())
+    totalcost=[]
+    row=[]
+    for i in range(0,len(ItemIds)):
+        temp=[]
+        connection = sqlite3.connect("database.db")
+        cur = connection.cursor()
+        cur.execute('SELECT ItemId,ItemName,ItemPrice FROM Items WHERE ItemId=?',(ItemIds[i],))
+        rows = cur.fetchall()
+        temp.append(rows[0][0])
+        temp.append(rows[0][1])
+        temp.append(rows[0][2])
+        row.append(tuple(temp))
+        totalcost.append(int(qt[i])*int(rows[0][2]))        
+    totalsum=sum(totalcost)    
+    return render_template("RetailerCart.html",range=range(0,len(row)),totalsum=totalsum,rows=row,totalcost=totalcost,quantity=list(RetailerCart[val].values()))
+
+
 # CUSTOMER
 
 @app.route('/customerHome')
@@ -274,7 +373,9 @@ def customerOrderAll():
     cur = connection.cursor()
     cur.execute("SELECT * FROM Items WHERE ItemOwnerId LIKE 'RT%'")
     rows = cur.fetchall()
-    return render_template("CustomerOrder.html",rows=rows,range=range(0,len(rows),4),len=len(rows))
+    distance=getlocation(rows)
+    print(distance)
+    return render_template("CustomerOrder.html",rows=rows,range=range(0,len(rows),4),len=len(rows),distance=distance)    
 
 @app.route('/customerOrderCategory/<string:category>',methods=['GET'])
 def customerOrderCategory(category):
@@ -283,7 +384,8 @@ def customerOrderCategory(category):
     cur = connection.cursor()
     cur.execute("SELECT * FROM Items WHERE ItemCategory=? AND ItemOwnerId LIKE 'RT%'",(category,))
     rows = cur.fetchall()
-    return render_template("CustomerOrder.html",rows=rows,range=range(0,len(rows),4),len=len(rows))
+    distance=getlocation(rows)
+    return render_template("CustomerOrder.html",rows=rows,range=range(0,len(rows),4),len=len(rows),distance=distance)
 
 @app.route('/addToCustomerCart',methods=['POST','GET'])
 def addToCustomerCart():
@@ -306,7 +408,8 @@ def addToCustomerCart():
     newval=int(rows[0][0])-int(quantity)
     cur.execute("UPDATE Items SET ItemQuantity=? WHERE ItemId=?", (newval,Id,))
     connection.commit()
-    return redirect(url_for('customerHome'))
+    return redirect(url_for('customerOrderAll'))
+    
 
 @app.route('/removeFromCustomerCart',methods=['POST','GET'])
 def removeFromCustomerCart():
@@ -322,7 +425,7 @@ def removeFromCustomerCart():
     newval=int(rows[0][0])+int(quantity)
     cur.execute("UPDATE Items SET ItemQuantity=? WHERE ItemId=?", (newval,Id,))
     connection.commit()
-    return redirect(url_for('customerHome'))
+    return redirect(url_for('viewCustomerCart'))
 
 @app.route('/viewCustomerCart',methods=['POST','GET'])
 def viewCustomerCart():
@@ -366,7 +469,6 @@ def placeOrderOnline():
         item=item+str(item_id)+","        
         connection = sqlite3.connect("database.db")
         cur = connection.cursor()
-        #Instead Of Querry By Id , Query By Name If More Than One Recored Returned Then Return Closest , https://stackoverflow.com/questions/19412462/getting-distance-between-two-points-based-on-latitude-longitude#:~:text=Install%20it%20via%20pip%20install,were%20looking%20for%20dist%20%3D%20mpu
         cur.execute("SELECT ItemPrice,ItemOwnerId,ItemName FROM Items WHERE ItemId=?",(item_id,))
         rows = cur.fetchall()
         total_price=total_price+(int(rows[0][0])*int(qt))
