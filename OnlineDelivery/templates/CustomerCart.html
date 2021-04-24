@@ -28,7 +28,7 @@
   <div class="topnav">
     <a href="{{ url_for('customerHome')}}">Home</a>
     <a class="active" href="#">Cart</a>
-    <a href="#Transactions">Transactions</a>
+    <a href="{{ url_for('customerTransactions')}}">Transactions</a>
     <a href="{{ url_for('logout')}}">Logout</a>
   </div>
   <br><br>
@@ -68,9 +68,14 @@
     </tbody>
   </table>
   <br><br>
-  <center><h2>Total Amount Rs {{totalsum}}</h2></center>
+  <center>
+    <h2>Total Amount Rs {{totalsum}}</h2>
+  </center>
   <br><br>
   <div class="text-center">
     <a href="{{url_for('placeOrderOnline') }}" class="btn btn-primary">Order Online</a>
     <a href="#" class="btn btn-primary">Order Offline</a>
   </div>
+</body>
+
+</html>

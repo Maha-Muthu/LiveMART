@@ -14,10 +14,10 @@
     Record of Customer Transactions
   </h1>
   <div class="topnav">
-    <a href="#">Home</a>
-    <a href="#Cart">Cart</a>
-    <a href="#Transactions">Transactions</a>
-    <a class="active" href="#Transactions">Customer Transactions</a>
+    <a href="{{ url_for('retailerHome')}}">Home</a>
+    <a href="{{ url_for('viewRetailerCart') }}">Cart</a>
+    <a href="{{ url_for('retailerTransactions')}}">Transactions</a>
+    <a class="active" href="#">Customer Transactions</a>
     <a href="{{ url_for('logout') }}">Logout</a>
   </div>
   <br><br>
