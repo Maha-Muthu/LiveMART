@@ -387,6 +387,12 @@ def retailerOrder():
         cat=cat+str(rows[0][3])+","
         price=price+str(rows[0][4])+","
         connection.close()
+    item=item[:-1]
+    qty=qty[:-1]
+    owner=owner[:-1]
+    cat=cat[:-1]
+    price=price[:-1]
+    name=name[:-1]
     with sqlite3.connect("Database.db") as connection:
         cur = connection.cursor()
         cur.execute("INSERT INTO Orders (OrderedBy,OrderedTo,ItemsOrdered,QuantityOrdered,TotalCost,Status,ItemCategory,ItemUnitPrice,ItemName) VALUES (?,?,?,?,?,?,?,?,?);", (val,owner,item,qty,total_price,'Ordered',cat,price,name))
@@ -441,12 +447,13 @@ def retailerCustomerTransactions():
                 temp.clear()
             else:
                 continue
-    print("REVIEW RETAILER :",row)
+    
             
     return render_template("RetailerViewCustomerTransactions.html",rows=row) 
 
 
 # CUSTOMER
+
 
 @app.route('/customerHome')
 def customerHome():
@@ -551,7 +558,7 @@ def placeOrderOnline():
     cat=""
     price=""
     name=""
-    
+    details="Mahesh,+91 9123456780,26/04/2020"    
     for i in range(0,len(Items)):
         qt=Items.get(key[i])         
         item_id=key[i]
@@ -572,12 +579,56 @@ def placeOrderOnline():
     owner=owner[:-1]
     cat=cat[:-1]
     price=price[:-1]
-    name=name[:-1]
-    
+    name=name[:-1]    
     with sqlite3.connect("Database.db") as connection:
         cur = connection.cursor()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-        cur.execute("INSERT INTO Orders (OrderedBy,OrderedTo,ItemsOrdered,QuantityOrdered,TotalCost,Status,ItemCategory,ItemUnitPrice,ItemName) VALUES (?,?,?,?,?,?,?,?,?);", (val,owner,item,qty,total_price,OrderStatus[0],cat,price,name))
-        connection.commit()    
+        cur.execute("INSERT INTO Orders (OrderedBy,OrderedTo,ItemsOrdered,QuantityOrdered,TotalCost,Status,ItemCategory,ItemUnitPrice,ItemName,DeliveryDetails) VALUES (?,?,?,?,?,?,?,?,?,?);", (val,owner,item,qty,total_price,OrderStatus[0],cat,price,name,details))
+        connection.commit()
+    CustomerCart[val]={}
+    return redirect(url_for('customerTransactions'))
+
+@app.route('/placeOrderOffline',methods=['POST','GET'])
+def placeOrderOffline():
+    val=session.get('Id',None)
+    global CustomerCart
+    global OrderStatus
+    Items=CustomerCart[val]
+    key=list(Items.keys())
+    item=""
+    qty=""
+    owner=""
+    total_price=0
+    cat=""
+    price=""
+    name=""
+    details="Self PickUp"
+    status="Offline Order"   
+    for i in range(0,len(Items)):
+        qt=Items.get(key[i])         
+        item_id=key[i]
+        qty=qty+qt+","
+        item=item+str(item_id)+","        
+        connection = sqlite3.connect("database.db")
+        cur = connection.cursor()
+        cur.execute("SELECT ItemPrice,ItemOwnerId,ItemName,ItemCategory,ItemPrice FROM Items WHERE ItemId=?",(item_id,))
+        rows = cur.fetchall()
+        total_price=total_price+(int(rows[0][0])*int(qt))
+        owner=owner+str(rows[0][1])+","
+        name=name+str(rows[0][2])+","
+        cat=cat+str(rows[0][3])+","
+        price=price+str(rows[0][4])+","
+        connection.close()
+    item=item[:-1]
+    qty=qty[:-1]
+    owner=owner[:-1]
+    cat=cat[:-1]
+    price=price[:-1]
+    name=name[:-1]    
+    with sqlite3.connect("Database.db") as connection:
+        cur = connection.cursor()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+        cur.execute("INSERT INTO Orders (OrderedBy,OrderedTo,ItemsOrdered,QuantityOrdered,TotalCost,Status,ItemCategory,ItemUnitPrice,ItemName,DeliveryDetails) VALUES (?,?,?,?,?,?,?,?,?,?);", (val,owner,item,qty,total_price,status,cat,price,name,details))
+        connection.commit()
+    CustomerCart[val]={}
     return redirect(url_for('customerTransactions'))
 
 @app.route('/customerTransactions',methods=['POST','GET'])
@@ -590,6 +641,8 @@ def customerTransactions():
     rows = cur.fetchall()
     for i in range(0,len(rows)):
         status=rows[i][1]
+        if(status=="Offline Order"):
+            continue
         index1=OrderStatus.index(str(status))
         if(index1==len(OrderStatus)-1):
             continue
@@ -601,10 +654,21 @@ def customerTransactions():
     rows = cur.fetchall()
     return render_template("CustomerTransactions.html",rows=rows) 
 
+@app.route("/livesearch",methods=["POST","GET"])
+def livesearch():
+    searchbox = request.form['searchvalue']
+    with sqlite3.connect("Database.db") as connection:
+        cur = connection.cursor()
+        cur.execute("SELECT * FROM Items WHERE ItemName=?", (searchbox,))
+        rows = cur.fetchall()
+    distance=getlocation(rows)
+    return render_template("CustomerOrder.html",rows=rows,range=range(0,len(rows),4),len=len(rows),distance=distance)
+
 @app.route('/logout')
 def logout():
     val = session.get('Id', None)
     session.pop(val, None)
     return render_template("index.html")
+
 if __name__ == "__main__":
     app.run(debug=True)        

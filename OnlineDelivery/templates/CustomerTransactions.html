@@ -1,4 +1,4 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -9,7 +9,17 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="../static/css/customertransactions.css">
+  <style>
+    th {
+      text-align: center;
+    }
+
+    td {
+      text-align: center;
+    }
+  </style>
 </head>
+
 <body>
   <h1>
     Transactions
@@ -17,7 +27,7 @@
   <div class="topnav">
     <a href="{{ url_for('customerHome')}}">Home</a>
     <a href="{{ url_for('viewCustomerCart')}}">Cart</a>
-    <a class="active"href="#">Transactions</a>
+    <a class="active" href="#">Transactions</a>
     <a href="{{ url_for('logout')}}">Logout</a>
   </div>
   <br><br>
@@ -31,9 +41,9 @@
         <th scope="col">Items Orderd</th>
         <th scope="col">Items Quantity</th>
         <th scope="col">Items Unit Price</th>
-        <th scope="col">Items TotalPrice</th>
         <th scope="col">Total Amount</th>
         <th scope="col">Delivery Status</th>
+        <th scope="col">Delivery Details</th>
       </tr>
     </thead>
     <tbody>
@@ -42,9 +52,9 @@
         <td scope="row">{{row[9]}}</td>
         <td scope="row">{{row[4]}}</td>
         <td scope="row">{{row[8]}}</td>
-        <td scope="row">SET</td>
         <td scope="row">{{row[5]}}</td>
         <td scope="row">{{row[6]}}</td>
+        <td scope="row">{{row[10]}}</td>
       </tr>
       {% endfor %}
     </tbody>
