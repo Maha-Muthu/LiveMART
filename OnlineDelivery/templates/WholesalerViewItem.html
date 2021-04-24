@@ -35,21 +35,24 @@
   <table class="table">
     <thead class="thead-dark">
       <tr>
-        <th scope="col">Sample</th>
-        <th scope="col">Sample</th>
-        <th scope="col">Sample</th>
-        <th scope="col">Sample</th>
-        <th scope="col">Sample</th>
+        <th scope="col">Item Id</th>
+        <th scope="col">Item Name</th>
+        <th scope="col">Item Price</th>
+        <th scope="col">Item Quantity</th>
+        <th scope="col">Item Category</th>
       </tr>
-    </thead>
+    </thead>              
     <tbody>
+      {% for row in rows %}
       <tr>
-        <td scope="row">Sample</td>
-        <td scope="row">Sample</td>
-        <td scope="row">Sample</td>
-        <td scope="row">Sample</td>
-        <td scope="row">Sample</td>
-    </td>
-</tr>
-</tbody>
-</table>
+        <td scope="row">{{row[0]}}</td>
+        <td scope="row">{{row[1]}}</td>
+        <td scope="row">{{row[2]}}</td>
+        <td scope="row">{{row[3]}}</td>
+        <td scope="row">{{row[4]}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+    </body>
+    </html>

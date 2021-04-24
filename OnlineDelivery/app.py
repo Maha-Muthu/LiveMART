@@ -1,10 +1,23 @@
 from flask import *
+from flask_mail import *
 import sqlite3
 import os
 import mpu
+from random import *  
 
 app = Flask(__name__)
 app.secret_key = "E-Commerce"
+mail = Mail(app) 
+
+app.config["MAIL_SERVER"]='smtp.gmail.com'  
+app.config["MAIL_PORT"] = 465     
+app.config["MAIL_USERNAME"] = 'livemart27@gmail.com'  
+app.config['MAIL_PASSWORD'] = 'Jahnavi@27'  
+app.config['MAIL_USE_TLS'] = False  
+app.config['MAIL_USE_SSL'] = True  
+  
+mail = Mail(app)  
+otp = randint(000000,999999) 
 
 global CustomerCart
 CustomerCart={}
@@ -12,6 +25,10 @@ global RetailerCart
 RetailerCart={}
 global OrderStatus
 OrderStatus=['Order Placed','Order Dispatched','In Transit','Delivered']
+global Id
+Id=""
+global Role
+Role=""
 
 @app.route('/', methods=["GET", "POST"])
 def main():
@@ -23,6 +40,8 @@ def logged():
         role=request.form['Role']
         uname=request.form['Username']
         password=request.form['Password']
+        global Id
+        global Role
         with sqlite3.connect('Database.db') as connection:
             cur = connection.cursor()
             if(role=="Wholesaler"):
@@ -30,8 +49,9 @@ def logged():
                 rows=cur.fetchall()
                 if len(rows)>=1:
                     if rows[0][2]==password:
-                        session['Id']=rows[0][0]
-                        return redirect(url_for('wholesalerHome'))
+                        Id=rows[0][0]
+                        Role="Wholesaler"
+                        return redirect(url_for('TwoStepValidation',em=rows[0][3]))
                     else:
                         flash('Password Incorrect ... Try Again !!')
                 else :
@@ -41,8 +61,9 @@ def logged():
                 rows=cur.fetchall()
                 if len(rows)>=1:
                     if rows[0][2]==password:
-                        session['Id']=rows[0][0]
-                        return redirect(url_for('retailerHome'))
+                        Id=rows[0][0]
+                        Role="Retailer"
+                        return redirect(url_for('TwoStepValidation',em=rows[0][3]))
                     else:
                         flash('Password Incorrect ... Try Again !!')
                 else :
@@ -52,13 +73,39 @@ def logged():
                 rows=cur.fetchall()
                 if len(rows)>=1:
                     if rows[0][2]==password:
-                        session['Id']=rows[0][0]
-                        return redirect(url_for('customerHome'))
+                        Id=rows[0][0]
+                        Role="Customer"
+                        return redirect(url_for('TwoStepValidation',em=rows[0][3]))
                     else:
                         flash('Password Incorrect ... Try Again !!')
                 else :
                     flash('Username Incorrect ... Try Again !!')
     return render_template('index.html')
+
+@app.route('/TwoStepValidation/<string:em>')
+def TwoStepValidation(em):
+    msg = Message('OTP',sender = 'livemart27@gmail.com', recipients = [em])  
+    msg.body = str(otp)  
+    mail.send(msg)  
+    return render_template('VerifyOTP.html')  
+
+@app.route('/validateOTP',methods=["POST"])  
+def validate():  
+    user_otp = request.form['otp']  
+    if otp == int(user_otp):
+        global Id
+        session['Id']=Id
+        global Role
+        if (Role=="Wholesaler"):
+            return redirect(url_for('wholesalerHome'))
+        elif(Role=="Retailer"):
+            return redirect(url_for('retailerHome'))
+        else:
+            return redirect(url_for('customerHome'))
+
+    else:
+        flash('Inavalid OTP ... Try Again !!')
+        return render_template('index.html') 
 
 def IdIncrement(role):
     if(role=="Customer"):
@@ -159,10 +206,17 @@ def getlocation(rows):
 def wholesalerHome():
     return render_template("WholesalerHome.html")
 
+@app.route('/wholesalerViewItem',methods=['POST','GET'])
+def wholesalerViewItem():
+    curid =session.get('Id', None)
+    connection = sqlite3.connect("database.db")
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM Items WHERE ItemOwnerId=?", (curid,))
+    rows = cur.fetchall()
+    return render_template("WholesalerViewItem.html",rows=rows)
+
 @app.route('/wholesalerAddItem',methods=['POST','GET'])
 def wholesalerAddItem():
-    val =session.get('Id', None)
-    connection = sqlite3.connect("database.db")
     return render_template("WholesalerUpload.html")
 
 @app.route('/wholesalerUpdateItem',methods=['POST','GET'])
@@ -199,24 +253,19 @@ def wholesalerDeleteItem():
 def wholesalerRemoveItem():
     if request.method == 'POST':
         try:
-            itemId = request.form['itemId']
-            
-            global CustomerCart
-            customerIds=list(CustomerCart.keys())
-            for i in customerIds:
-                print(i)
-                print(CustomerCart)
-                itemIds=list(i.keys())
-
+            itemId = request.form['itemId']            
+            global RetailerCart
+            retailerIds=list(RetailerCart.keys())
+            for i in retailerIds:
+                itemIds=list(RetailerCart[i].keys())
                 for j in itemIds:
                     print(j)
                     if itemId in j:
-                        del CustomerCart[i][j] 
-            print(CustomerCart)
+                        del RetailerCart[i][j]
             with sqlite3.connect("Database.db") as connection:
                 cur = connection.cursor()
                 cur.execute("DELETE FROM Items  WHERE ItemId=?", (itemId,))
-                cur.execute
+                cur.execute 
                 connection.commit()
         except:
             connection.rollback()
@@ -233,8 +282,6 @@ def viewRetailers():
 
 @app.route('/removeRetailers',methods=['POST','GET'])
 def removeRetailers():
-    val =session.get('Id', None)
-    connection = sqlite3.connect("database.db")
     return render_template("WholesalerRemoveRetailers.html")
 
 # RETAILER
@@ -454,7 +501,6 @@ def retailerCustomerTransactions():
 
 # CUSTOMER
 
-
 @app.route('/customerHome')
 def customerHome():
     return render_template("CustomerHome.html")
@@ -501,7 +547,6 @@ def addToCustomerCart():
     cur.execute("UPDATE Items SET ItemQuantity=? WHERE ItemId=?", (newval,Id,))
     connection.commit()
     return redirect(url_for('customerOrderAll'))
-    
 
 @app.route('/removeFromCustomerCart',methods=['POST','GET'])
 def removeFromCustomerCart():
@@ -587,6 +632,12 @@ def placeOrderOnline():
     CustomerCart[val]={}
     return redirect(url_for('customerTransactions'))
 
+@app.route('/customerFeedback',methods=['POST','GET'])
+def customerFeedback():
+    OrderId=request.form['Id']
+    return render_template('CustomerFeedback.html',OrderId=OrderId)
+    
+
 @app.route('/placeOrderOffline',methods=['POST','GET'])
 def placeOrderOffline():
     val=session.get('Id',None)
@@ -659,7 +710,7 @@ def livesearch():
     searchbox = request.form['searchvalue']
     with sqlite3.connect("Database.db") as connection:
         cur = connection.cursor()
-        cur.execute("SELECT * FROM Items WHERE ItemName=?", (searchbox,))
+        cur.execute("SELECT * FROM Items WHERE ItemName=? AND ItemOwnerId LIKE 'RT%'", (searchbox,))
         rows = cur.fetchall()
     distance=getlocation(rows)
     return render_template("CustomerOrder.html",rows=rows,range=range(0,len(rows),4),len=len(rows),distance=distance)

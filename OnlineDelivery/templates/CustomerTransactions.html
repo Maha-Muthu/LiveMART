@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+
 
 <head>
   <title>CustomerTransactions</title>
@@ -25,10 +25,12 @@
     Transactions
   </h1>
   <div class="topnav">
-    <a href="{{ url_for('customerHome')}}">Home</a>
-    <a href="{{ url_for('viewCustomerCart')}}">Cart</a>
-    <a class="active" href="#">Transactions</a>
-    <a href="{{ url_for('logout')}}">Logout</a>
+      <a href="{{ url_for('customerHome')}}">Home</a>
+      <a href="{{ url_for('viewCustomerCart')}}">Cart</a>
+      <a class="active" href="#">Transactions</a>
+      <a href="{{ url_for('customerFeedback')}}">Customer Feedback</a>
+      <a href="{{ url_for('logout')}}">Logout</a>
+
   </div>
   <br><br>
   <h2>
@@ -44,18 +46,32 @@
         <th scope="col">Total Amount</th>
         <th scope="col">Delivery Status</th>
         <th scope="col">Delivery Details</th>
+          <th scope="col">Feedback</th>
       </tr>
     </thead>
     <tbody>
       {% for row in rows %}
-      <tr>
-        <td scope="row">{{row[9]}}</td>
-        <td scope="row">{{row[4]}}</td>
-        <td scope="row">{{row[8]}}</td>
-        <td scope="row">{{row[5]}}</td>
-        <td scope="row">{{row[6]}}</td>
-        <td scope="row">{{row[10]}}</td>
-      </tr>
+        <tr>
+            <td scope="row">{{row[9]}}</td>
+            <td scope="row">{{row[4]}}</td>
+            <td scope="row">{{row[8]}}</td>
+            <td scope="row">{{row[5]}}</td>
+            <td scope="row">{{row[6]}}</td>
+            <td scope="row">{{row[10]}}</td>
+           
+            {% if row[6]=='Delivered' %}
+            <td scope="row">
+                <form method="POST" action="{{ url_for('customerFeedback')}}">
+                  <input type="hidden" name="Id" value="{{row[0]}}">
+                    <button type="submit" class="btn btn-primary">Fill Feedback</button>
+                </form>
+            </td>
+            {% else %}
+            <td scope="row">
+                <button type="submit" class="btn btn-primary" disabled>Fill Feedback</button>
+            </td>
+            {% endif %}
+        </tr>
       {% endfor %}
     </tbody>
   </table>

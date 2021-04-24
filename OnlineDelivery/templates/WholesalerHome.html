@@ -15,7 +15,8 @@
   </h1>
   <div class="topnav">
     <a class="active" href="#">Home</a>
-    <a href="#">View Items</a>
+    <a href="{{ url_for('wholesalerViewItem') }}">View My Items</a>
+    <a href="{{ url_for('wholesalerViewRetailers') }}">View Retailer Transactions</a>
     <a href="{{ url_for('logout') }}">Logout</a>
   </div>
   <br>
@@ -49,38 +50,6 @@
         </div>
         </a>
         <div class="card box-shadow">
-        </div>
-      </div>
-    </div>
-  </div>
-  <h2>Manage Retailers</h2>
-  <br>
-  <div id="cards">
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-6">
-          <a href="{{ url_for('viewRetailers') }}">
-          <div class="card box-shadow">
-            <img src="../static/add_person.png" class="card-img-top" alt="..." width="50%" height="50%">
-            <div class="card-body">
-              <h5 class="card-title">
-                View Retailers
-              </h5>
-            </div>
-          </div>
-        </a>
-        </div>
-        <div class="col-sm-6">
-          <a href="{{ url_for('removeRetailers') }}">
-          <div class="card box-shadow">
-            <img src="../static/delete_person.png" class="card-img-top" alt="..." width="50%" height="50%">
-            <div class="card-body">
-              <h5 class="card-title">
-                Delete Retailer
-              </h5>
-            </div>
-          </div>
-        </a>
         </div>
       </div>
     </div>

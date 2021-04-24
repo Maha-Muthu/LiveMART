@@ -17,10 +17,12 @@
     LiveMart For Customers
   </h1>
   <div class="topnav">
-    <a class="active" href="#">Home</a>
-    <a href="{{ url_for('viewCustomerCart')}}">Cart</a>
-    <a href="{{ url_for('customerTransactions')}}">Transactions</a>
-    <a href="{{ url_for('logout') }}">Logout</a>
+      <a class="active" href="#">Home</a>
+      <a href="{{ url_for('viewCustomerCart')}}">Cart</a>
+      <a href="{{ url_for('customerTransactions')}}">Transactions</a>
+      <a href="{{ url_for('customerFeedback')}}">Customer Feedback</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+
   </div>
   <br>
   {% with messages=get_flashed_messages()%}
