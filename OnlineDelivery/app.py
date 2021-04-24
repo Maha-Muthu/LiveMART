@@ -10,6 +10,8 @@ global CustomerCart
 CustomerCart={}
 global RetailerCart
 RetailerCart={}
+global OrderStatus
+OrderStatus=['Order Placed','Order Dispatched','In Transit','Delivered']
 
 @app.route('/', methods=["GET", "POST"])
 def main():
@@ -398,16 +400,56 @@ def retailerTransactions():
     cur = connection.cursor()
     cur.execute("SELECT * FROM Orders WHERE OrderedBy=?",(curid,))
     rows = cur.fetchall()
-    print(rows)
-    return render_template("RetailerTransactions.html",rows=rows) 
+    return render_template("RetailerTransactions.html",rows=rows)
+
+@app.route('/retailerCustomerTransactions',methods=['POST','GET'])
+def retailerCustomerTransactions():
+    curid=session.get('Id',None)
+    connection=sqlite3.connect("database.db")
+    cur=connection.cursor()
+    cur.execute("SELECT * FROM Orders ")
+    row=[]
+    rows=cur.fetchall()
+    for i in range(0,len(rows)):
+        Retailer_list=rows[i][2].split(",")
+        Item_list=rows[i][3].split(",")
+        Qty_list=rows[i][4].split(",")
+        
+        Item_UnitPrice=rows[i][8].split(",")
+        Item_Name=rows[i][9].split(",")
+        temp=[]
+        for j in range(0,len(Retailer_list)):
+            if(Retailer_list[j]==curid):
+                temp.append(rows[i][0])
+                
+                cur.execute("SELECT username from Customers WHERE Id =?",(rows[0][1],))
+                c_name=cur.fetchall()
+                temp.append(c_name[0][0])
+                
+                temp.append(Qty_list[j])
+                cur.execute("SELECT ItemPrice FROM Items WHERE ItemId=?",(Item_list[j],))
+                item_price=cur.fetchall()
+                temp.append(item_price[0][0] * int(Qty_list[j]))
+                temp.append(rows[i][6])
+                
+                temp.append(Item_UnitPrice[j])
+                temp.append(Item_Name[j])
+                
+
+
+                row.append(tuple(temp))
+                temp.clear()
+            else:
+                continue
+    print("REVIEW RETAILER :",row)
+            
+    return render_template("RetailerViewCustomerTransactions.html",rows=row) 
 
 
 # CUSTOMER
 
 @app.route('/customerHome')
 def customerHome():
-    val =session.get('Id', None)
-    connection = sqlite3.connect("database.db")
     return render_template("CustomerHome.html")
 
 @app.route('/customerOrderAll',methods=['POST','GET'])
@@ -418,7 +460,6 @@ def customerOrderAll():
     cur.execute("SELECT * FROM Items WHERE ItemOwnerId LIKE 'RT%'")
     rows = cur.fetchall()
     distance=getlocation(rows)
-    print(distance)
     return render_template("CustomerOrder.html",rows=rows,range=range(0,len(rows),4),len=len(rows),distance=distance)    
 
 @app.route('/customerOrderCategory/<string:category>',methods=['GET'])
@@ -500,12 +541,17 @@ def viewCustomerCart():
 def placeOrderOnline():
     val=session.get('Id',None)
     global CustomerCart
+    global OrderStatus
     Items=CustomerCart[val]
     key=list(Items.keys())
     item=""
     qty=""
     owner=""
     total_price=0
+    cat=""
+    price=""
+    name=""
+    
     for i in range(0,len(Items)):
         qt=Items.get(key[i])         
         item_id=key[i]
@@ -513,22 +559,52 @@ def placeOrderOnline():
         item=item+str(item_id)+","        
         connection = sqlite3.connect("database.db")
         cur = connection.cursor()
-        cur.execute("SELECT ItemPrice,ItemOwnerId,ItemName FROM Items WHERE ItemId=?",(item_id,))
+        cur.execute("SELECT ItemPrice,ItemOwnerId,ItemName,ItemCategory,ItemPrice FROM Items WHERE ItemId=?",(item_id,))
         rows = cur.fetchall()
         total_price=total_price+(int(rows[0][0])*int(qt))
         owner=owner+str(rows[0][1])+","
+        name=name+str(rows[0][2])+","
+        cat=cat+str(rows[0][3])+","
+        price=price+str(rows[0][4])+","
         connection.close()
+    item=item[:-1]
+    qty=qty[:-1]
+    owner=owner[:-1]
+    cat=cat[:-1]
+    price=price[:-1]
+    name=name[:-1]
+    
     with sqlite3.connect("Database.db") as connection:
-        cur = connection.cursor()
-        cur.execute("INSERT INTO Orders (OrderedBy,OrderedTo,ItemsOrdered,QuantityOrdered,TotalCost,Status) VALUES (?,?,?,?,?,?);", (val,owner,item,qty,total_price,'Ordered'))
+        cur = connection.cursor()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+        cur.execute("INSERT INTO Orders (OrderedBy,OrderedTo,ItemsOrdered,QuantityOrdered,TotalCost,Status,ItemCategory,ItemUnitPrice,ItemName) VALUES (?,?,?,?,?,?,?,?,?);", (val,owner,item,qty,total_price,OrderStatus[0],cat,price,name))
         connection.commit()    
-    return "Success"
+    return redirect(url_for('customerTransactions'))
+
+@app.route('/customerTransactions',methods=['POST','GET'])
+def customerTransactions():
+    curid =session.get('Id', None)
+    connection = sqlite3.connect("database.db")
+    cur = connection.cursor()
+    cur.execute("SELECT OrderId,Status FROM Orders WHERE OrderedBy=?",(curid,))
+    global OrderStatus
+    rows = cur.fetchall()
+    for i in range(0,len(rows)):
+        status=rows[i][1]
+        index1=OrderStatus.index(str(status))
+        if(index1==len(OrderStatus)-1):
+            continue
+        else:
+            index1+=1
+            cur.execute("UPDATE Orders SET Status=? WHERE OrderId=?", (OrderStatus[index1],rows[i][0],))
+            connection.commit()
+    cur.execute("SELECT * FROM Orders WHERE OrderedBy=?",(curid,))
+    rows = cur.fetchall()
+    return render_template("CustomerTransactions.html",rows=rows) 
 
 @app.route('/logout')
 def logout():
     val = session.get('Id', None)
     session.pop(val, None)
     return render_template("index.html")
-
 if __name__ == "__main__":
     app.run(debug=True)        
