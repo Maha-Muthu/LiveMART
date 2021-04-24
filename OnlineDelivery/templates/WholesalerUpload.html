@@ -1,58 +1,63 @@
 <!DOCTYPE html>
 <html>
-    <head>
-      <title>WholesalerUpload</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <link rel="stylesheet" href="../static/css/wholesalerupload.css"> 
-    </head>
-    <body>
-      <body>
-        <h1>
-            Upload Item
-        </h1>
-        <div class="topnav">
-            <a href="{{ url_for('wholesalerHome')}}">Home</a>
-            <a href="#">View Items</a>
-            <a href="{{ url_for('logout')}}">Logout</a>
-          </div>
-          <br>
-        <div class="container" style="width: 50%;">
-            <form method = "post" action = "{{ url_for('wholesalerUpdateItem') }}">
-              <div class="form-group" style="text-align: center;">
-                <label for="Category">Item Category</label>
-                <select class="form-control" name=itemCategory required>
-                  <option disabled selected value="">Select Category</option>
-                  <option>Fruits And Vegetables</option>
-                  <option>Snacks And Drinks</option>
-                  <option>Diary Products</option>
-                  <option>Food Grains , Oils And Masalas</option>
-                  <option>Others</option>
-                </select>
-              </div>
-              <div class="form-group"style="text-align: center;">
-                <label for="Item Name">Item Name</label>
-                <input type="text" class="form-control" placeholder="Enter Item Name" name="itemName" required>
-              </div>
-              <div class="form-group"style="text-align: center;">
-                <label for="Item Price">Item Price</label>
-                <input type="text" class="form-control" placeholder="Enter Item Price" name="itemPrice" required>
-              </div>
-              <div class="form-group"style="text-align: center;">
-                <label for="Item Quantity">Item Quantity</label>
-                <input type="text" class="form-control" placeholder="Enter Item Quantiy" name="itemQuantity" required>
-              </div>
-              <div class="form-group"style="text-align: center;">
-                <label for="Item Image">Item Image Link</label>
-                <input type="text" class="form-control" placeholder="Enter Image Link" name="itemImage" required>
-              </div>
-              <center>
-              <button type="submit" class="btn btn-default">Submit</button>
-              </center>
-            </form>
-          </div>
-    </body>
+
+<head>
+  <title>WholesalerUpload</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="../static/css/wholesalerupload.css">
+</head>
+
+<body>
+
+  <body>
+    <h1>
+      Upload Item
+    </h1>
+    <div class="topnav">
+      <a href="{{ url_for('wholesalerHome')}}">Home</a>
+      <a href="{{ url_for('wholesalerViewItem') }}">View My Items</a>
+      <a href="{{ url_for('wholesalerViewRetailers') }}">View Retailer Transactions</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+    <br>
+    <div class="container" style="width: 50%;">
+      <form method="post" action="{{ url_for('wholesalerUpdateItem') }}">
+        <div class="form-group" style="text-align: center;">
+          <label for="Category">Item Category</label>
+          <select class="form-control" name=itemCategory required>
+            <option disabled selected value="">Select Category</option>
+            <option>Fruits And Vegetables</option>
+            <option>Snacks And Drinks</option>
+            <option>Diary Products</option>
+            <option>Food Grains , Oils And Masalas</option>
+            <option>Others</option>
+          </select>
+        </div>
+        <div class="form-group" style="text-align: center;">
+          <label for="Item Name">Item Name</label>
+          <input type="text" class="form-control" placeholder="Enter Item Name" name="itemName" required>
+        </div>
+        <div class="form-group" style="text-align: center;">
+          <label for="Item Price">Item Price</label>
+          <input type="text" class="form-control" placeholder="Enter Item Price" name="itemPrice" required>
+        </div>
+        <div class="form-group" style="text-align: center;">
+          <label for="Item Quantity">Item Quantity</label>
+          <input type="text" class="form-control" placeholder="Enter Item Quantiy" name="itemQuantity" required>
+        </div>
+        <div class="form-group" style="text-align: center;">
+          <label for="Item Image">Item Image Link</label>
+          <input type="text" class="form-control" placeholder="Enter Image Link" name="itemImage" required>
+        </div>
+        <center>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </center>
+      </form>
+    </div>
+  </body>
+
 </html>

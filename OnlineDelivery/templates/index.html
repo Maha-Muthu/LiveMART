@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title>LiveMART</title>
   <meta charset="utf-8">
@@ -9,40 +10,42 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="../static/css/style.css">
 </head>
-<body>
-<br><br>  
-<div class="container">
-  <form method = "post" action = "{{ url_for('logged') }}">
-    {% with messages=get_flashed_messages()%}
-      {% if messages %}
-        {% for message in messages %}
-          <p style="color:red;">{{ message }}</p>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-    <h1>LiveMart</h1>
-<br>
-    <h2 class="text-center">Login</h2>  
-    <div class="form-group">
-      <select class="form-control" name=Role required>
-        <option disabled selected value="">Select Role</option>
-        <option>Wholesaler</option>
-        <option>Retailer</option>
-        <option>Customer</option>
-      </select>
-    </div>
-    <div class="form-group">      
-      <input type="text" class="form-control" placeholder="Enter Username" name="Username" required>
-    </div>
-    <div class="form-group">
-      <input type="password" class="form-control" placeholder="Enter Password" name="Password" required>
-    </div>
-    <button type="submit" class="btn btn-default">Get OTP</button>
-    <br><br>
 
-    <p class="text-center medium">Don't have an account? <a href="{{ url_for('signup') }}">Sign up here!</a></p>
-  </form>
-</div>
+<body>
+  <br><br>
+  <div class="container">
+    <form method="post" action="{{ url_for('logged') }}">
+      {% with messages=get_flashed_messages()%}
+      {% if messages %}
+      {% for message in messages %}
+      <p style="color:red;">{{ message }}</p>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+      <h1>LiveMart</h1>
+      <br>
+      <h2 class="text-center">Login</h2>
+      <div class="form-group">
+        <select class="form-control" name=Role required>
+          <option disabled selected value="">Select Role</option>
+          <option>Wholesaler</option>
+          <option>Retailer</option>
+          <option>Customer</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="Enter Username" name="Username" required>
+      </div>
+      <div class="form-group">
+        <input type="password" class="form-control" placeholder="Enter Password" name="Password" required>
+      </div>
+      <button type="submit" class="btn btn-default">Submit</button>
+      <br><br>
+
+      <p class="text-center medium">Don't have an account? <a href="{{ url_for('signup') }}">Sign up here!</a></p>
+    </form>
+  </div>
 
 </body>
+
 </html>

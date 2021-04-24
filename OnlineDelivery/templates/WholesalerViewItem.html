@@ -1,33 +1,36 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>WholesalerViewItem</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <link rel="stylesheet" href="../static/css/wholesalerviewitem.css">  
-        <style>
-          th {
-            text-align: center;
-          }
-      
-          td {
-            text-align: center;
-          }
-        </style>   
-    </head>
-    <body>
-        <h1>View Items</h1>
-        <br>
-        
-        <div class="topnav">
-          <a href="{{ url_for('wholesalerHome')}}">Home</a>
-          <a  class="active" href="#">View Items</a>
-          <a href="{{ url_for('logout')}}">Logout</a>
-        </div>
-        <br>
+
+<head>
+  <title>WholesalerViewItem</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="../static/css/wholesalerviewitem.css">
+  <style>
+    th {
+      text-align: center;
+    }
+
+    td {
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Items With Me</h1>
+  <br>
+
+  <div class="topnav">
+    <a href="{{ url_for('wholesalerHome')}}">Home</a>
+    <a class="active" href="#">View My Items</a>
+    <a href="{{ url_for('wholesalerViewRetailers') }}">View Retailer Transactions</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+  </div>
+  <br>
   <h2>
     List of Items
   </h2>
@@ -41,7 +44,7 @@
         <th scope="col">Item Quantity</th>
         <th scope="col">Item Category</th>
       </tr>
-    </thead>              
+    </thead>
     <tbody>
       {% for row in rows %}
       <tr>
@@ -54,5 +57,6 @@
       {% endfor %}
     </tbody>
   </table>
-    </body>
-    </html>
+</body>
+
+</html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>ViewRetailers</title>
   <meta charset="utf-8">
@@ -9,36 +10,43 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="../static/css/wholesalerviewretailers.css">
 </head>
+
 <body>
   <h1>
     View Retailers
   </h1>
   <div class="topnav">
     <a href="{{ url_for('wholesalerHome')}}">Home</a>
-          <a href="#">View Items</a>
-          <a href="{{ url_for('logout')}}">Logout</a>
+    <a href="{{ url_for('wholesalerViewItem') }}">View My Items</a>
+    <a class="active" href="#">View Retailer Transactions</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
   </div>
   <br>
-  <h2>List of retailers</h2>
+  <h2>Retailers Transaction History</h2>
   <br>
   <table class="table">
     <thead class="thead-dark">
       <tr>
-        <th scope="col">Sample</th>
-        <th scope="col">Sample</th>
-        <th scope="col">Sample</th>
-        <th scope="col">Sample</th>
-        <th scope="col">Sample</th>
+        <th scope="col">Order Id</th>
+        <th scope="col">Ordered By</th>
+        <th scope="col">Items Ordered</th>
+        <th scope="col">Quantity Ordered</th>
+        <th scope="col">Items Unit Price</th>
+        <th scope="col">Total Cost</th>
+        <th scope="col">Status</th>        
       </tr>
     </thead>
     <tbody>
+      {% for row in rows %}
       <tr>
-        <td scope="row">Sample</td>
-        <td scope="row">Sample</td>
-        <td scope="row">Sample</td>
-        <td scope="row">Sample</td>
-        <td scope="row">Sample</td>
-      </td>
-    </tr>
-  </tbody>
-</table>
+        <td scope="row">{{row[0]}}</td>
+        <td scope="row">{{row[1]}}</td>
+        <td scope="row">{{row[6]}}</td>
+        <td scope="row">{{row[2]}}</td>
+        <td scope="row">{{row[5]}}</td>
+        <td scope="row">{{row[3]}}</td>
+        <td scope="row">{{row[4]}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>

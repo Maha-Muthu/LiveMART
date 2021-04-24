@@ -215,6 +215,43 @@ def wholesalerViewItem():
     rows = cur.fetchall()
     return render_template("WholesalerViewItem.html",rows=rows)
 
+@app.route('/wholesalerViewRetailers',methods=['POST','GET'])
+def wholesalerViewRetailers():
+    curid=session.get('Id',None)
+    connection=sqlite3.connect("database.db")
+    cur=connection.cursor()
+    cur.execute("SELECT * FROM Orders ")
+    row=[]
+    rows=cur.fetchall()
+    for i in range(0,len(rows)):
+        Wholesaler_list=rows[i][2].split(",")
+        Item_list=rows[i][3].split(",")
+        Qty_list=rows[i][4].split(",")        
+        Item_UnitPrice=rows[i][8].split(",")
+        Item_Name=rows[i][9].split(",")
+        temp=[]
+        for j in range(0,len(Wholesaler_list)):
+            if(Wholesaler_list[j]==curid):
+                temp.append(rows[i][0])
+                cur.execute("SELECT username from Retailers WHERE Id =?",(rows[i][1],))
+                c_name=cur.fetchall()
+                temp.append(c_name[0][0])                
+                temp.append(Qty_list[j])
+                cur.execute("SELECT ItemPrice FROM Items WHERE ItemId=?",(Item_list[j],))
+                item_price=cur.fetchall()
+                temp.append(item_price[0][0] * int(Qty_list[j]))
+                temp.append(rows[i][6])
+                temp.append(Item_UnitPrice[j])
+                temp.append(Item_Name[j])       
+                row.append(tuple(temp))
+                temp.clear()
+            else:
+                continue
+    print(row)
+    return render_template("WholesalerViewRetailers.html",rows=row)
+
+
+
 @app.route('/wholesalerAddItem',methods=['POST','GET'])
 def wholesalerAddItem():
     return render_template("WholesalerUpload.html")
@@ -259,7 +296,6 @@ def wholesalerRemoveItem():
             for i in retailerIds:
                 itemIds=list(RetailerCart[i].keys())
                 for j in itemIds:
-                    print(j)
                     if itemId in j:
                         del RetailerCart[i][j]
             with sqlite3.connect("Database.db") as connection:
@@ -274,15 +310,6 @@ def wholesalerRemoveItem():
             connection.close()
     return redirect(url_for('wholesalerHome'))
 
-@app.route('/viewRetailers',methods=['POST','GET'])
-def viewRetailers():
-    val =session.get('Id', None)
-    connection = sqlite3.connect("database.db")
-    return render_template("WholesalerViewRetailers.html")
-
-@app.route('/removeRetailers',methods=['POST','GET'])
-def removeRetailers():
-    return render_template("WholesalerRemoveRetailers.html")
 
 # RETAILER
 
