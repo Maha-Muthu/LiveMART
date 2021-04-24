@@ -357,6 +357,50 @@ def viewRetailerCart():
     totalsum=sum(totalcost)    
     return render_template("RetailerCart.html",range=range(0,len(row)),totalsum=totalsum,rows=row,totalcost=totalcost,quantity=list(RetailerCart[val].values()))
 
+@app.route('/retailerOrder',methods=['POST','GET'])
+def retailerOrder():
+    val=session.get('Id',None)
+    global RetailerCart
+    Items=RetailerCart[val]
+    key=list(Items.keys())
+    item=""
+    qty=""
+    owner=""
+    total_price=0
+    cat=""
+    price=""
+    name=""
+    for i in range(0,len(Items)):
+        qt=Items.get(key[i])         
+        item_id=key[i]
+        qty=qty+qt+","
+        item=item+str(item_id)+","        
+        connection = sqlite3.connect("database.db")
+        cur = connection.cursor()
+        cur.execute("SELECT ItemPrice,ItemOwnerId,ItemName,ItemCategory,ItemPrice FROM Items WHERE ItemId=?",(item_id,))
+        rows = cur.fetchall()
+        total_price=total_price+(int(rows[0][0])*int(qt))
+        owner=owner+str(rows[0][1])+","
+        name=name+str(rows[0][2])+","
+        cat=cat+str(rows[0][3])+","
+        price=price+str(rows[0][4])+","
+        connection.close()
+    with sqlite3.connect("Database.db") as connection:
+        cur = connection.cursor()
+        cur.execute("INSERT INTO Orders (OrderedBy,OrderedTo,ItemsOrdered,QuantityOrdered,TotalCost,Status,ItemCategory,ItemUnitPrice,ItemName) VALUES (?,?,?,?,?,?,?,?,?);", (val,owner,item,qty,total_price,'Ordered',cat,price,name))
+        connection.commit()    
+    return redirect(url_for('retailerTransactions'))
+
+@app.route('/retailerTransactions',methods=['POST','GET'])
+def retailerTransactions():
+    curid =session.get('Id', None)
+    connection = sqlite3.connect("database.db")
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM Orders WHERE OrderedBy=?",(curid,))
+    rows = cur.fetchall()
+    print(rows)
+    return render_template("RetailerTransactions.html",rows=rows) 
+
 
 # CUSTOMER
 
@@ -477,8 +521,7 @@ def placeOrderOnline():
     with sqlite3.connect("Database.db") as connection:
         cur = connection.cursor()
         cur.execute("INSERT INTO Orders (OrderedBy,OrderedTo,ItemsOrdered,QuantityOrdered,TotalCost,Status) VALUES (?,?,?,?,?,?);", (val,owner,item,qty,total_price,'Ordered'))
-        connection.commit()
-    
+        connection.commit()    
     return "Success"
 
 @app.route('/logout')
