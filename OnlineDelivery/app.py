@@ -802,6 +802,8 @@ def customerTransactions():
     curid =session.get('Id', None)
     connection = sqlite3.connect("database.db")
     cur = connection.cursor()
+    cur.execute("SELECT eMailId FROM Customers WHERE Id=?",(curid,))
+    r=cur.fetchall()
     cur.execute("SELECT OrderId,Status FROM Orders WHERE OrderedBy=?",(curid,))
     global OrderStatus
     rows = cur.fetchall()
@@ -809,6 +811,10 @@ def customerTransactions():
         status=rows[i][1]
         if(status=="Offline Order"):
             continue
+        if(status=="In Transit"):
+            msg = Message('OrderDelivered',sender = 'livemart27@gmail.com', recipients = [r[0][0]])  
+            msg.body = "Your Order Is Delivered ! A Remainder For You To Fill The Feedback" 
+            mail.send(msg) 
         index1=OrderStatus.index(str(status))
         if(index1==len(OrderStatus)-1):
             continue
