@@ -598,6 +598,28 @@ def retailerUpdateStock():
 def customerHome():
     return render_template("CustomerHome.html")
 
+@app.route('/setfeedback',methods=['POST','GET'])
+def setfeedback():
+    oid = request.form['oid']
+    Fb = request.form['Fb']
+    connection=sqlite3.connect("database.db")
+    cur=connection.cursor()
+    cur.execute("SELECT * FROM Orders WHERE OrderId=?",(oid,))
+    rows=cur.fetchall()
+    ItemId=rows[0][3].split(",")
+    for i in ItemId:
+        if(Fb=="Good"):
+            cur.execute("UPDATE Items SET GoodRatings = GoodRatings + 1 WHERE ItemId=?", (i,))
+            connection.commit()
+            connection.commit()           
+        elif(Fb=="Average"):
+            cur.execute("UPDATE Items SET AvgRatings = AvgRatings + 1 WHERE ItemId=?", (i,))
+            connection.commit()
+        else:
+            cur.execute("UPDATE Items SET BadRatings = BadRatings + 1 WHERE ItemId=?", (i,))
+            connection.commit()
+    return render_template("CustomerHome.html")
+
 @app.route('/customerOrderAll',methods=['POST','GET'])
 def customerOrderAll():
     curid =session.get('Id', None)

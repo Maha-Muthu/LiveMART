@@ -1,21 +1,19 @@
 <html>
+
 <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet"
-          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
-          crossorigin="anonymous" />
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-            crossorigin="anonymous"></script>
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-            crossorigin="anonymous"></script>
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-            crossorigin="anonymous"></script>
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
         body {
@@ -23,10 +21,8 @@
         }
     </style>
 </head>
+
 <body>
-
-    
-
     <div class="container-fluid" style="margin-top:50px;">
         <div class="row">
             <div class="col-md-12">
@@ -35,32 +31,25 @@
                         <center>
                             <h1 style="color:white;">Feedback </h1>
                         </center>
-                        <form name="myform">
+                        <form method="POST" action="{{ url_for('setfeedback') }}">
                             <div class="form-group">
-
                                 <label>Order Id</label>
-                                <input readonly type="text" class="form-control" id="lat" name="latitude" value="{{OrderId}}">
+                                <input readonly type="text" class="form-control" name="oid" value="{{OrderId}}">
                                 <br></br>
                                 <label>Rating</label>
 
                                 <div class="form-check">
-                                    <input type="radio" class="form-check-input" id="materialGroupExample1" name="groupOfMaterialRadios">
+                                    <input type="radio" class="form-check-input" value="Good" name="Fb" required>
                                     <label class="form-check-label" for="materialGroupExample1">Good </label>
                                 </div>
-
-                                <!-- Group of material radios - option 2 -->
                                 <div class="form-check">
-                                    <input type="radio" class="form-check-input" id="materialGroupExample3" name="groupOfMaterialRadios">
+                                    <input type="radio" class="form-check-input" value="Average" name="Fb">
                                     <label class="form-check-label" for="materialGroupExample3">Average</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" class="form-check-input" id="materialGroupExample2" name="groupOfMaterialRadios">
+                                    <input type="radio" class="form-check-input" value="Bad" name="Fb">
                                     <label class="form-check-label" for="materialGroupExample2">Bad</label>
                                 </div>
-
-                                <!-- Group of material radios - option 3 -->
-
-
                                 <br></br>
 
                                 <button type="submit" class="btn btn-primary">Submit</button>
@@ -79,11 +68,10 @@
 
     <script>
         var x = document.getElementById("lat");
-        
-        function gerLocation()
-        {
-            x.value={OrderId};
-        alert("Hello");
+
+        function gerLocation() {
+            x.value = { OrderId };
+            alert("Hello");
         }
         getLocation();
     </script>
