@@ -247,10 +247,7 @@ def wholesalerViewRetailers():
                 temp.clear()
             else:
                 continue
-    print(row)
     return render_template("WholesalerViewRetailers.html",rows=row)
-
-
 
 @app.route('/wholesalerAddItem',methods=['POST','GET'])
 def wholesalerAddItem():
@@ -351,6 +348,30 @@ def retailerDeleteItem():
     rows = cur.fetchall()
     return render_template("RetailerRemoveItem.html",rows=rows)
 
+@app.route('/retailerRemoveItem',methods=['POST','GET'])
+def retailerRemoveItem():
+    if request.method == 'POST':
+        try:
+            itemId = request.form['itemId']            
+            global CustomerCart
+            custIds=list(CustomerCart.keys())
+            for i in custIds:
+                itemIds=list(CustomerCart[i].keys())
+                for j in itemIds:
+                    if itemId in j:
+                        del CustomerCart[i][j]
+            with sqlite3.connect("Database.db") as connection:
+                cur = connection.cursor()
+                cur.execute("DELETE FROM Items  WHERE ItemId=?", (itemId,))
+                cur.execute 
+                connection.commit()
+        except:
+            connection.rollback()
+            flash("Delete Item Failed")
+        finally:
+            connection.close()
+    return redirect(url_for('retailerHome'))
+
 @app.route('/retailerOrderAll',methods=['POST','GET'])
 def retailerOrderAll():
     curid =session.get('Id', None)
@@ -437,6 +458,7 @@ def viewRetailerCart():
 def retailerOrder():
     val=session.get('Id',None)
     global RetailerCart
+    global OrderStatus
     Items=RetailerCart[val]
     key=list(Items.keys())
     item=""
@@ -446,6 +468,7 @@ def retailerOrder():
     cat=""
     price=""
     name=""
+    details="Rajesh,+91 90246813579,25/04/2020"
     for i in range(0,len(Items)):
         qt=Items.get(key[i])         
         item_id=key[i]
@@ -469,8 +492,9 @@ def retailerOrder():
     name=name[:-1]
     with sqlite3.connect("Database.db") as connection:
         cur = connection.cursor()
-        cur.execute("INSERT INTO Orders (OrderedBy,OrderedTo,ItemsOrdered,QuantityOrdered,TotalCost,Status,ItemCategory,ItemUnitPrice,ItemName) VALUES (?,?,?,?,?,?,?,?,?);", (val,owner,item,qty,total_price,'Ordered',cat,price,name))
-        connection.commit()    
+        cur.execute("INSERT INTO Orders (OrderedBy,OrderedTo,ItemsOrdered,QuantityOrdered,TotalCost,Status,ItemCategory,ItemUnitPrice,ItemName,DeliveryDetails) VALUES (?,?,?,?,?,?,?,?,?,?);", (val,owner,item,qty,total_price,OrderStatus[0],cat,price,name,details))
+        connection.commit()
+    RetailerCart[val]={}
     return redirect(url_for('retailerTransactions'))
 
 @app.route('/retailerTransactions',methods=['POST','GET'])
@@ -478,9 +502,24 @@ def retailerTransactions():
     curid =session.get('Id', None)
     connection = sqlite3.connect("database.db")
     cur = connection.cursor()
+    cur.execute("SELECT OrderId,Status FROM Orders WHERE OrderedBy=?",(curid,))
+    global OrderStatus
+    rows = cur.fetchall()
+    for i in range(0,len(rows)):
+        status=rows[i][1]
+        index1=OrderStatus.index(str(status))
+        if(index1==len(OrderStatus)-1):
+            continue
+        else:
+            index1+=1
+            cur.execute("UPDATE Orders SET Status=? WHERE OrderId=?", (OrderStatus[index1],rows[i][0],))
+            connection.commit()
     cur.execute("SELECT * FROM Orders WHERE OrderedBy=?",(curid,))
     rows = cur.fetchall()
-    return render_template("RetailerTransactions.html",rows=rows)
+    lengths=[]
+    for i in range(len(rows)):
+        lengths.append(len(rows[i][2].split(",")))
+    return render_template("RetailerTransactions.html",rows=rows,length=range(len(rows)),lengths=lengths)
 
 @app.route('/retailerCustomerTransactions',methods=['POST','GET'])
 def retailerCustomerTransactions():
@@ -493,39 +532,66 @@ def retailerCustomerTransactions():
     for i in range(0,len(rows)):
         Retailer_list=rows[i][2].split(",")
         Item_list=rows[i][3].split(",")
-        Qty_list=rows[i][4].split(",")
-        
+        Qty_list=rows[i][4].split(",")        
         Item_UnitPrice=rows[i][8].split(",")
         Item_Name=rows[i][9].split(",")
         temp=[]
         for j in range(0,len(Retailer_list)):
             if(Retailer_list[j]==curid):
-                temp.append(rows[i][0])
-                
-                cur.execute("SELECT username from Customers WHERE Id =?",(rows[0][1],))
+                temp.append(rows[i][0])                
+                cur.execute("SELECT username from Customers WHERE Id =?",(rows[i][1],))
                 c_name=cur.fetchall()
-                temp.append(c_name[0][0])
-                
+                temp.append(c_name[0][0])                
                 temp.append(Qty_list[j])
                 cur.execute("SELECT ItemPrice FROM Items WHERE ItemId=?",(Item_list[j],))
                 item_price=cur.fetchall()
                 temp.append(item_price[0][0] * int(Qty_list[j]))
-                temp.append(rows[i][6])
-                
+                temp.append(rows[i][6])                
                 temp.append(Item_UnitPrice[j])
                 temp.append(Item_Name[j])
-                
-
-
                 row.append(tuple(temp))
                 temp.clear()
             else:
-                continue
-    
-            
+                continue           
     return render_template("RetailerViewCustomerTransactions.html",rows=row) 
 
+@app.route('/addToStock',methods=['POST','GET'])
+def addToStock():
+    OrderId=request.form['want']
+    item=request.form['item']
+    connection = sqlite3.connect("database.db")
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM Orders WHERE OrderId=?",(OrderId,))
+    rows = cur.fetchall()
+    ItemCategory=rows[0][7].split(",")    
+    ItemName=rows[0][9].split(",")
+    ItemQuantity=rows[0][4].split(",")
+    ItemId=rows[0][3].split(",") 
+    cur.execute("SELECT ItemImageLink FROM Items WHERE ItemId=?",(ItemId[int(item)],))
+    rows = cur.fetchall()
+    return render_template("LoadStock.html",rows=rows,cat=ItemCategory[int(item)],name=ItemName[int(item)],quant=ItemQuantity[int(item)],img=rows[0][0])
 
+@app.route('/retailerUpdateStock',methods=['POST','GET'])
+def retailerUpdateStock():
+    if request.method == 'POST':
+        try:
+            val =session.get('Id', None)
+            itemCategory = request.form['itemCategory']
+            itemName = request.form['itemName']
+            itemPrice = request.form['itemPrice']
+            itemQuantity = request.form['itemQuantity']
+            itemImage = request.form['itemImage']
+            with sqlite3.connect("Database.db") as connection:
+                cur = connection.cursor()
+                cur.execute("INSERT INTO Items (ItemName,ItemPrice,ItemQuantity,ItemCategory,ItemOwnerId,ItemImageLink) VALUES (?,?,?,?,?,?);", (itemName,itemPrice,itemQuantity,itemCategory,val,itemImage))
+                connection.commit()
+        except:
+            connection.rollback()
+            flash("Add Item Failed")
+        finally:
+            connection.close()
+    return redirect(url_for('retailerHome'))
+    
 # CUSTOMER
 
 @app.route('/customerHome')
@@ -630,7 +696,7 @@ def placeOrderOnline():
     cat=""
     price=""
     name=""
-    details="Mahesh,+91 9123456780,26/04/2020"    
+    details="Mahesh,+91 9123456780,25/04/2020"    
     for i in range(0,len(Items)):
         qt=Items.get(key[i])         
         item_id=key[i]

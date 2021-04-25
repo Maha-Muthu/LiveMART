@@ -1,5 +1,6 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
+
 <head>
   <title>RetailerTransactions</title>
   <meta charset="utf-8">
@@ -7,8 +8,18 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="../static/css/retailertransactions.css">
 </head>
+
 <body>
   <h1>
     Transactions
@@ -24,6 +35,7 @@
   <h2>
     Your Transactions:
   </h2>
+  <h1>{{n}}</h1>
   <br><br>
   <table class="table">
     <thead class="thead-dark">
@@ -31,20 +43,39 @@
         <th scope="col">Items Orderd</th>
         <th scope="col">Items Quantity</th>
         <th scope="col">Items Unit Price</th>
-        <th scope="col">Items TotalPrice</th>
         <th scope="col">Total Amount</th>
         <th scope="col">Delivery Status</th>
+        <th scope="col">Delivery Details</th>
+        <th scope="col">Add To Stock</th>
       </tr>
     </thead>
     <tbody>
-      {% for row in rows %}
+      {% for i in length %}
       <tr>
-        <td scope="row">{{row[9]}}</td>
-        <td scope="row">{{row[4]}}</td>
-        <td scope="row">{{row[8]}}</td>
-        <td scope="row">SET</td>
-        <td scope="row">{{row[5]}}</td>
-        <td scope="row">{{row[6]}}</td>
+        <td scope="row">{{rows[i][9]}}</td>
+        <td scope="row">{{rows[i][4]}}</td>
+        <td scope="row">{{rows[i][8]}}</td>
+        <td scope="row">{{rows[i][5]}}</td>
+        <td scope="row">{{rows[i][6]}}</td>
+        <td scope="row">{{rows[i][10]}}</td>
+
+        {% if rows[i][6]=='Delivered' %}
+        <td scope="row">
+          {%for j in range(0,lengths[i])%}
+          <form method="POST" action="{{ url_for('addToStock')}}">
+            <input type="hidden" name="want" value="{{rows[i][0]}}">
+            <input type="hidden" name="item" value="{{j}}">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-shopping-cart"
+                style="font-size:24px"></i></button>
+          </form>
+          {%endfor%}
+        </td>
+        {% else %}
+        <td scope="row">
+          <button type="submit" class="btn btn-primary" disabled><i class="fa fa-shopping-cart"
+              style="font-size:24px"></i></button>
+        </td>
+        {% endif %}
       </tr>
       {% endfor %}
     </tbody>

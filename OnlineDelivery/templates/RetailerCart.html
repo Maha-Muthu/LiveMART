@@ -26,9 +26,10 @@
     Cart
   </h1>
   <div class="topnav">
-    <a href="{{ url_for('retailerHome')}}">Home</a>
-    <a class="active" href="#">Cart</a>
-    <a href="{{ url_for('retailerTransactions')}}">Transactions</a>
+    <a href="{{url_for('retailerHome')}}">Home</a>
+    <a class="active" href="{{ url_for('viewRetailerCart') }}">Cart</a>
+    <a href="#{{ url_for('retailerTransactions')}}">Transactions</a>
+    <a href="{{url_for('retailerCustomerTransactions')}}">Customer Transactions</a>
     <a href="{{ url_for('logout') }}">Logout</a>
   </div>
   <br><br>

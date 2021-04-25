@@ -28,20 +28,26 @@
   <table class="table">
     <thead class="thead-dark">
       <tr style="color: rgb(179, 32, 32);">
-        <th scope="col">Item name</th>
-        <th scope="col">Item Quantity</th>
-        <th scope="col">Item Price</th>
-        <th scope="col">Handle</th>
+        <th scope="col">Order Id</th>
+        <th scope="col">Ordered By</th>
+        <th scope="col">Items Ordered</th>
+        <th scope="col">Quantity Ordered</th>
+        <th scope="col">Items Unit Price</th>
+        <th scope="col">Total Cost</th>
         <th scope="col">Status</th>
       </tr>
     </thead>
     <tbody>
+      {% for row in rows %}
       <tr>
-        <td scope="row">Sample</td>
-        <td>Sample</td>
-        <td>Sample</td>
-        <td>Sample</td>
-        <td>Sample</td>
+        <td scope="row">{{row[0]}}</td>
+        <td scope="row">{{row[1]}}</td>
+        <td scope="row">{{row[6]}}</td>
+        <td scope="row">{{row[2]}}</td>
+        <td scope="row">{{row[5]}}</td>
+        <td scope="row">{{row[3]}}</td>
+        <td scope="row">{{row[4]}}</td>
       </tr>
+      {% endfor %}
     </tbody>
   </table>
